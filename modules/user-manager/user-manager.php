@@ -213,6 +213,7 @@ function classicpack_user_manager_pre_get_users( $query ) {
 		return;
 	}
 
+	// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Required for ordering users by last-login meta.
 	$query->query_vars['meta_key'] = 'classicpack_last_login';
 	$query->query_vars['orderby']  = 'meta_value_num';
 	$query->query_vars['meta_type'] = 'NUMERIC';
@@ -259,6 +260,7 @@ function classicpack_user_manager_render_screen() {
 			'no_found_rows'          => true,
 			'update_post_meta_cache' => false,
 			'update_post_term_cache' => false,
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Admin-only screen; small result set.
 			'meta_query'             => array(
 				array(
 					'key'     => CLASSICPACK_USER_RESTRICTION_META_KEY,

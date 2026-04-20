@@ -146,13 +146,15 @@ function classicpress_useronline_record( string $page_url = '', string $page_tit
 function classicpress_useronline_ajax(): void {
     check_ajax_referer( 'classicpress_useronline', 'nonce' );
 
-    $mode = isset( $_POST['mode'] ) ? sanitize_text_field( trim( wp_unslash( $_POST['mode'] ) ) ) : '';
+    $mode_raw = filter_input( INPUT_POST, 'mode' );
+    $mode     = is_string( $mode_raw ) ? sanitize_text_field( trim( wp_unslash( $mode_raw ) ) ) : '';
 
     if ( 'heartbeat' === $mode ) {
-        $raw_page_url = isset( $_POST['page_url'] ) ? wp_unslash( $_POST['page_url'] ) : '';
-        $raw_page_url = is_string( $raw_page_url ) ? $raw_page_url : '';
+        $raw_page_url = filter_input( INPUT_POST, 'page_url' );
+        $raw_page_url = is_string( $raw_page_url ) ? wp_unslash( $raw_page_url ) : '';
         $page_url     = str_replace( get_bloginfo( 'url' ), '', $raw_page_url );
-        $page_title   = isset( $_POST['page_title'] ) ? sanitize_text_field( wp_unslash( $_POST['page_title'] ) ) : '';
+        $title_raw    = filter_input( INPUT_POST, 'page_title' );
+        $page_title   = is_string( $title_raw ) ? sanitize_text_field( wp_unslash( $title_raw ) ) : '';
         if ( $page_url !== $raw_page_url ) {
             classicpress_useronline_record( $page_url, $page_title );
         }
@@ -203,11 +205,11 @@ function classicpress_useronline_get_ip(): string {
         'REMOTE_ADDR',
     ];
     foreach ( $headers as $header ) {
-        $server_value = isset( $_SERVER[ $header ] ) ? wp_unslash( $_SERVER[ $header ] ) : '';
-        if ( '' === $server_value ) {
+        $server_raw = filter_input( INPUT_SERVER, $header );
+        if ( ! is_string( $server_raw ) || '' === $server_raw ) {
             continue;
         }
-        $raw_header = (string) $server_value;
+        $raw_header = (string) wp_unslash( $server_raw );
         [ $ip ]     = explode( ',', $raw_header );
         $ip         = trim( $ip );
         if ( filter_var( $ip, FILTER_VALIDATE_IP ) ) {

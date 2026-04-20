@@ -41,7 +41,9 @@ function classicpack_delete_post_attachments_on_before_delete( $post_id ) {
 
 		$thumb_query = new WP_Query(
 			array(
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Narrow query; runs on intentional post delete only.
 				'meta_key'       => '_thumbnail_id',
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 				'meta_value'     => $attachment_id,
 				'post_type'      => 'any',
 				'fields'         => 'ids',
