@@ -103,7 +103,8 @@ function classicpress_auto_save_images_post_save( $data, $postarr ) {
 	$post_id = ! empty( $postarr['ID'] ) ? (int) $postarr['ID'] : 0;
 
 	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- wp_insert_post_data runs after core has verified the save request for this post.
-	$skip = ( isset( $_POST['classicpress_skip_remote_save'] ) && '1' === wp_unslash( $_POST['classicpress_skip_remote_save'] ) )
+	$skip_remote = isset( $_POST['classicpress_skip_remote_save'] ) ? sanitize_text_field( wp_unslash( $_POST['classicpress_skip_remote_save'] ) ) : '';
+	$skip = ( '1' === $skip_remote )
 		|| ( $post_id && get_post_meta( $post_id, '_classicpress_skip_remote_images', true ) === 'yes' );
 
 	if ( $skip ) {

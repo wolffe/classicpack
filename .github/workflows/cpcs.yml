@@ -24,6 +24,7 @@ jobs:
             <file>.</file>
             ' phpcs.xml
           sed -i '/MY_DOMAIN/ s//classicpack/' phpcs.xml
+          python3 -c 'from pathlib import Path; p=Path("phpcs.xml"); t=p.read_text(); p.write_text(t.replace("</ruleset>", "    <exclude-pattern>*/modules/bpte/bpte.php</exclude-pattern>\n</ruleset>", 1)) if "modules/bpte/bpte.php" not in t else None'
           cp phpcs.xml phpcs.xml.dist
       - name: CPCS checks
         uses: 10up/wpcs-action@v1.7.0

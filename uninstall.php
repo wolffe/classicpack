@@ -40,7 +40,7 @@ function classicpack_uninstall_single_site() {
 
 	foreach ( $tables as $table_name ) {
 		$safe_table = esc_sql( $table_name );
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.NotPrepared -- Uninstall; table name from $wpdb->prefix . 'useronline'.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Uninstall; table name from $wpdb->prefix . 'useronline' escaped with esc_sql().
 		$wpdb->query( "DROP TABLE IF EXISTS `{$safe_table}`" );
 	}
 }
