@@ -1,0 +1,26 @@
+---
+description: ClassicPack plugin conventions — PHP, security, i18n, and editing guidelines
+alwaysApply: true
+---
+
+# ClassicPack – Cursor rules
+
+Use this project’s rules when editing the ClassicPack plugin.
+
+## Conventions
+
+- **Functions:** Do not create functions you don’t need. If a function is only used once, put the code directly where it’s used instead of extracting it.
+- **PHP:** No namespace for global plugin code.
+- **Security:** Nonce and capability checks on all form saves and AJAX. Escape output (`esc_attr`, `esc_html`, `esc_url`).
+- **i18n:** Use `esc_html_e()` / `esc_html__()` and `esc_attr_e()` / `esc_attr__()` for translatable strings.
+- **Options:** Prefer `get_option` / `update_option` with a clear prefix. Document defaults where used.
+
+## When editing
+
+- Preserve backward compatibility for existing post meta and options.
+- Run PHPCS/CPCS if the project uses them.
+- Do not remove or repurpose existing options/keys without a migration path.
+
+## Project layout notes
+
+- One-off or archived **feature plans** may appear under `.cursor/plans/`; they are not runtime documentation.

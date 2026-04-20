@@ -64,6 +64,16 @@ function classicpack_get_module_registry() {
 			'description' => __( 'Optional registration and last-login columns on the Users screen (turn each off if your theme already shows them). You can also hide posts or pages from guests until they sign in.', 'classicpack' ),
 			'file'        => $base . 'user-manager/user-manager.php',
 		),
+		'post-type-switcher'     => array(
+			'label'       => __( 'Post type switcher', 'classicpack' ),
+			'description' => __( 'On the Classic post editor, switch the item to another public post type. Shows a short warning before you confirm.', 'classicpack' ),
+			'file'        => $base . 'post-type-switcher/post-type-switcher.php',
+		),
+		'duplicate-post'         => array(
+			'label'       => __( 'Duplicate post', 'classicpack' ),
+			'description' => __( 'Adds a “Duplicate” row action on list screens for public post types. Creates a draft copy with content, meta, terms, and featured image.', 'classicpack' ),
+			'file'        => $base . 'duplicate-post/duplicate-post.php',
+		),
 	);
 }
 
@@ -238,6 +248,11 @@ function classicpack_render_modules_page() {
 			'id'    => 'media',
 			'title' => __( 'Media', 'classicpack' ),
 			'slugs' => array( 'auto-save-images', 'delete-post-with-attachments' ),
+		),
+		array(
+			'id'    => 'content',
+			'title' => __( 'Content', 'classicpack' ),
+			'slugs' => array( 'post-type-switcher', 'duplicate-post' ),
 		),
 		array(
 			'id'    => 'users',
