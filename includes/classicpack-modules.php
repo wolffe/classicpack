@@ -64,11 +64,6 @@ function classicpack_get_module_registry() {
 			'description' => __( 'Optional registration and last-login columns on the Users screen (turn each off if your theme already shows them). You can also hide posts or pages from guests until they sign in.', 'classicpack' ),
 			'file'        => $base . 'user-manager/user-manager.php',
 		),
-		'bpte'                   => array(
-			'label'       => __( 'Bulk Post Type Editor', 'classicpack' ),
-			'description' => __( 'Browse and edit posts across public post types from one place: content, taxonomies, featured image, attachments list, and post meta.', 'classicpack' ),
-			'file'        => $base . 'bpte/bpte.php',
-		),
 	);
 }
 
@@ -108,11 +103,6 @@ function classicpack_get_module_admin_action_config() {
 			'mode'     => 'details',
 			'anchored' => true,
 			'cap'      => 'manage_options',
-		),
-		'bpte'                         => array(
-			'mode' => 'settings',
-			'page' => 'classicpack-bpte',
-			'cap'  => 'manage_options',
 		),
 	);
 }
@@ -248,11 +238,6 @@ function classicpack_render_modules_page() {
 			'id'    => 'media',
 			'title' => __( 'Media', 'classicpack' ),
 			'slugs' => array( 'auto-save-images', 'delete-post-with-attachments' ),
-		),
-		array(
-			'id'    => 'content',
-			'title' => __( 'Content', 'classicpack' ),
-			'slugs' => array( 'bpte' ),
 		),
 		array(
 			'id'    => 'users',
