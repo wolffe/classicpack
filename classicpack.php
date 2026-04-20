@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: ClassicPack
- * Plugin URI: https://github.com/wolffe/classicpack
+ * Plugin URI: https://getbutterfly.com/classicpress-plugins/classicpack/
  * Description: A modular toolkit for ClassicPress and WordPress. Enable modules from the ClassicPack admin screen.
  * Author: Ciprian Popescu
  * Author URI: https://getbutterfly.com/
