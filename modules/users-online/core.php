@@ -56,12 +56,13 @@ function classicpress_useronline_scripts(): void {
         return;
     }
 
-    wp_enqueue_script( 'classicpress-useronline', plugins_url( 'useronline.js', __FILE__ ), array(), CLASSICPACK_VERSION, true );
+    wp_enqueue_script( 'classicpress-useronline', plugins_url( 'useronline.js', __FILE__ ), [], CLASSICPACK_VERSION, true );
     wp_localize_script(
         'classicpress-useronline',
         'useronlineL10n',
         [
             'ajax_url' => admin_url( 'admin-ajax.php' ),
+            'nonce'    => wp_create_nonce( 'classicpress_useronline' ),
         ]
     );
 }
@@ -72,15 +73,15 @@ function classicpress_useronline_record( string $page_url = '', string $page_tit
     global $wpdb;
 
     if ( empty( $page_url ) ) {
-        $page_url = wp_strip_all_tags( $_SERVER['REQUEST_URI'] ?? '' );
+        $page_url = wp_strip_all_tags( (string) wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) );
     }
     if ( empty( $page_title ) ) {
         $page_title = wp_strip_all_tags( classicpress_useronline_get_title() );
     }
 
-    $referral   = wp_strip_all_tags( $_SERVER['HTTP_REFERER'] ?? '' );
+    $referral   = wp_strip_all_tags( (string) wp_unslash( $_SERVER['HTTP_REFERER'] ?? '' ) );
     $user_ip    = classicpress_useronline_get_ip();
-    $user_agent = wp_strip_all_tags( $_SERVER['HTTP_USER_AGENT'] ?? '' );
+    $user_agent = wp_strip_all_tags( (string) wp_unslash( $_SERVER['HTTP_USER_AGENT'] ?? '' ) );
 
     $user_id   = 0;
     $user_name = __( 'Guest', 'classicpack' );
@@ -101,7 +102,7 @@ function classicpress_useronline_record( string $page_url = '', string $page_tit
             $user_name = $current_user->display_name;
             $user_type = 'member';
         } elseif ( ! empty( $_COOKIE[ 'comment_author_' . COOKIEHASH ] ) ) {
-            $user_name = trim( wp_strip_all_tags( $_COOKIE[ 'comment_author_' . COOKIEHASH ] ) );
+            $user_name = trim( wp_strip_all_tags( (string) wp_unslash( $_COOKIE[ 'comment_author_' . COOKIEHASH ] ) ) );
         }
     }
 
@@ -143,19 +144,25 @@ function classicpress_useronline_record( string $page_url = '', string $page_tit
 }
 
 function classicpress_useronline_ajax(): void {
+    check_ajax_referer( 'classicpress_useronline', 'nonce' );
+
     $mode = sanitize_text_field( trim( wp_unslash( $_POST['mode'] ?? '' ) ) );
 
     if ( 'heartbeat' === $mode ) {
-        $page_url   = str_replace( get_bloginfo( 'url' ), '', wp_unslash( $_POST['page_url'] ?? '' ) );
-        $page_title = sanitize_text_field( wp_unslash( $_POST['page_title'] ?? '' ) );
-        if ( $page_url !== ( $_POST['page_url'] ?? '' ) ) {
+        $raw_page_url = isset( $_POST['page_url'] ) ? wp_unslash( $_POST['page_url'] ) : '';
+        $page_url     = str_replace( get_bloginfo( 'url' ), '', $raw_page_url );
+        $page_title   = sanitize_text_field( wp_unslash( $_POST['page_title'] ?? '' ) );
+        if ( $page_url !== $raw_page_url ) {
             classicpress_useronline_record( $page_url, $page_title );
         }
         wp_die();
     }
 
     if ( 'details' === $mode ) {
-        echo classicpress_useronline_render_page();
+        if ( ! current_user_can( 'list_users' ) ) {
+            wp_die( '', '', 403 );
+        }
+        echo classicpress_useronline_render_page(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Trusted HTML from classicpress_useronline_render_page(); escaped in this file.
     }
 
     wp_die();
@@ -179,7 +186,7 @@ function classicpress_useronline_get_title(): string {
         $suffix = trim( $suffix, " \t-–—\xc2\xa0" );
         $suffix = $suffix !== ''
             ? ' &raquo; ' . $suffix
-            : ' &raquo; ' . strip_tags( $_SERVER['REQUEST_URI'] ?? '' );
+            : ' &raquo; ' . wp_strip_all_tags( (string) wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) );
     }
     return $site_name . $suffix;
 }
@@ -198,8 +205,9 @@ function classicpress_useronline_get_ip(): string {
         if ( empty( $_SERVER[ $header ] ) ) {
             continue;
         }
-        [ $ip ] = explode( ',', $_SERVER[ $header ] );
-        $ip     = trim( $ip );
+        $raw_header = (string) wp_unslash( $_SERVER[ $header ] );
+        [ $ip ]     = explode( ',', $raw_header );
+        $ip         = trim( $ip );
         if ( filter_var( $ip, FILTER_VALIDATE_IP ) ) {
             return $ip;
         }
@@ -312,7 +320,8 @@ function classicpress_useronline_detailed_list( array $counts, array $buckets ):
             $avatar  = '<span class="uo-avatar">' . $initial . '</span>';
 
             $meta_parts = [];
-            if ( $ip = classicpress_useronline_format_ip( $user ) ) {
+            $ip = classicpress_useronline_format_ip( $user );
+            if ( $ip ) {
                 $meta_parts[] = $ip;
             }
             if ( current_user_can( 'edit_users' ) || ! str_contains( $user->page_url, 'wp-admin' ) ) {

@@ -47,4 +47,9 @@
     <rule ref="Universal.Arrays.DisallowShortArraySyntax.Found">
         <exclude-pattern>*</exclude-pattern>
     </rule>
+
+    <!-- BPTE: large admin list/edit screen; markup uses esc_html/esc_attr in attributes; remaining echoes are translated labels. -->
+    <rule ref="WordPress.Security.EscapeOutput.OutputNotEscaped">
+        <exclude-pattern>*/modules/bpte/bpte.php</exclude-pattern>
+    </rule>
 </ruleset>

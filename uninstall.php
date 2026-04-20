@@ -39,15 +39,17 @@ function classicpack_uninstall_single_site() {
 	);
 
 	foreach ( $tables as $table_name ) {
-		$wpdb->query( 'DROP TABLE IF EXISTS ' . $table_name );
+		$safe_table = esc_sql( $table_name );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.NotPrepared -- Uninstall; table name from $wpdb->prefix . 'useronline'.
+		$wpdb->query( "DROP TABLE IF EXISTS `{$safe_table}`" );
 	}
 }
 
 if ( is_multisite() ) {
 	global $wpdb;
 	$blog_ids = $wpdb->get_col( "SELECT blog_id FROM {$wpdb->blogs} WHERE archived = '0' AND spam = '0' AND deleted = '0'" );
-	foreach ( $blog_ids as $blog_id ) {
-		switch_to_blog( (int) $blog_id );
+	foreach ( $blog_ids as $site_blog_id ) {
+		switch_to_blog( (int) $site_blog_id );
 		classicpack_uninstall_single_site();
 		restore_current_blog();
 	}

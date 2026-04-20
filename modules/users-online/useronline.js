@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(ajaxUrl, Object.assign({}, postOpts, {
             body: new URLSearchParams({
                 action: 'classicpress_useronline',
+                nonce: useronlineL10n.nonce,
                 mode: 'heartbeat',
                 page_url: location.protocol + '//' + location.host + location.pathname + location.search,
                 page_title: document.title
@@ -27,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
             fetch(ajaxUrl, Object.assign({}, postOpts, {
                 body: new URLSearchParams({
                     action: 'classicpress_useronline',
+                    nonce: useronlineL10n.nonce,
                     mode: 'details'
                 }).toString()
             }))

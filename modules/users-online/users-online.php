@@ -116,7 +116,7 @@ function classicpress_useronline_register_dashboard_widget() {
  * @return void
  */
 function classicpress_useronline_dashboard_widget_content() {
-	echo classicpress_useronline_render_page();
+	echo classicpress_useronline_render_page(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Trusted HTML from classicpress_useronline_render_page() (escaped in core.php).
 }
 
 /**
@@ -130,6 +130,6 @@ function classicpress_useronline_render_admin_screen() {
 	}
 	echo '<div class="wrap">';
 	echo '<h1>' . esc_html__( 'Users Online', 'classicpack' ) . '</h1>';
-	echo classicpress_useronline_render_page();
+	echo classicpress_useronline_render_page(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Trusted HTML from classicpress_useronline_render_page() (escaped in core.php).
 	echo '</div>';
 }

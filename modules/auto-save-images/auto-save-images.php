@@ -102,7 +102,8 @@ function classicpress_auto_save_images_post_save( $data, $postarr ) {
 
 	$post_id = ! empty( $postarr['ID'] ) ? (int) $postarr['ID'] : 0;
 
-	$skip = ( isset( $_POST['classicpress_skip_remote_save'] ) && '1' === $_POST['classicpress_skip_remote_save'] )
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- wp_insert_post_data runs after core has verified the save request for this post.
+	$skip = ( isset( $_POST['classicpress_skip_remote_save'] ) && '1' === wp_unslash( $_POST['classicpress_skip_remote_save'] ) )
 		|| ( $post_id && get_post_meta( $post_id, '_classicpress_skip_remote_images', true ) === 'yes' );
 
 	if ( $skip ) {
@@ -169,7 +170,7 @@ function classicpress_auto_save_images_save_remote( $image_url, $post_id, $i ) {
 		return array( 'url' => $image_url );
 	}
 
-	$raw_name = urldecode( basename( parse_url( $image_url, PHP_URL_PATH ) ) );
+	$raw_name = urldecode( basename( (string) wp_parse_url( $image_url, PHP_URL_PATH ) ) );
 	$filename = sanitize_file_name( $raw_name );
 
 	if ( empty( pathinfo( $filename, PATHINFO_FILENAME ) ) ) {
@@ -177,7 +178,7 @@ function classicpress_auto_save_images_save_remote( $image_url, $post_id, $i ) {
 		$filename = md5( $image_url ) . ( $ext ? '.' . sanitize_file_name( $ext ) : '' );
 	}
 
-	$res = wp_upload_bits( $filename, '', $file );
+	$res = wp_upload_bits( $filename, null, $file );
 	if ( ! empty( $res['error'] ) ) {
 		return array( 'url' => $image_url );
 	}
@@ -207,7 +208,7 @@ function classicpress_auto_save_images_save_remote( $image_url, $post_id, $i ) {
  * @return void
  */
 function classicpress_auto_save_images_options_form() {
-	if ( isset( $_POST['submit'] ) && $_POST['submit'] ) {
+	if ( isset( $_POST['submit'] ) ) {
 		check_admin_referer( 'classicpress_auto_save_images_options', 'classicpress_auto_save_images_nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {

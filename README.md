@@ -1,0 +1,1 @@
+[![ClassicPress Directory Coding Standard checks.](https://github.com/wolffe/classicpack/actions/workflows/cpcs.yml/badge.svg?branch=master)](https://github.com/wolffe/classicpack/actions/workflows/cpcs.yml)

@@ -6,7 +6,7 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+    exit;
 }
 
 /**
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return string
  */
 function classicpack_bpte_get_page_slug() {
-	return 'classicpack-bpte';
+    return 'classicpack-bpte';
 }
 
 /**
@@ -24,17 +24,17 @@ function classicpack_bpte_get_page_slug() {
  * @return void
  */
 function classicpack_bpte_register_submenu() {
-	if ( ! function_exists( 'classicpack_get_menu_slug' ) ) {
-		return;
-	}
-	add_submenu_page(
-		classicpack_get_menu_slug(),
-		__( 'Bulk Post Type Editor', 'classicpack' ),
-		__( 'Post Type Editor', 'classicpack' ),
-		'manage_options',
-		classicpack_bpte_get_page_slug(),
-		'classicpack_bpte_render_admin_page'
-	);
+    if ( ! function_exists( 'classicpack_get_menu_slug' ) ) {
+        return;
+    }
+    add_submenu_page(
+        classicpack_get_menu_slug(),
+        __( 'Bulk Post Type Editor', 'classicpack' ),
+        __( 'Post Type Editor', 'classicpack' ),
+        'manage_options',
+        classicpack_bpte_get_page_slug(),
+        'classicpack_bpte_render_admin_page'
+    );
 }
 
 add_action( 'admin_menu', 'classicpack_bpte_register_submenu', 12 );
@@ -46,10 +46,10 @@ add_action( 'admin_menu', 'classicpack_bpte_register_submenu', 12 );
  * @return void
  */
 function classicpack_bpte_setup_codemirror( $_hook_suffix ) {
-	if ( ! isset( $_GET['page'] ) || (string) wp_unslash( $_GET['page'] ) !== classicpack_bpte_get_page_slug() ) {
-		return;
-	}
-	// Simple WordPress CodeMirror setup - minimal configuration
+    if ( ! isset( $_GET['page'] ) || (string) wp_unslash( $_GET['page'] ) !== classicpack_bpte_get_page_slug() ) {
+        return;
+    }
+    // Simple WordPress CodeMirror setup - minimal configuration
     wp_enqueue_code_editor(
         [
             'type'       => 'text/html',
@@ -76,13 +76,12 @@ function classicpack_bpte_setup_codemirror( $_hook_suffix ) {
         '1.0.0',
         true
     );
-
 }
 add_action( 'admin_enqueue_scripts', 'classicpack_bpte_setup_codemirror' );
 
 function classicpack_bpte_render_admin_page() {
-    $action  = $_GET['action'] ?? 'list';
-    $post_id = isset( $_GET['post_id'] ) ? intval( $_GET['post_id'] ) : 0;
+    $action  = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : 'list';
+    $post_id = isset( $_GET['post_id'] ) ? absint( wp_unslash( $_GET['post_id'] ) ) : 0;
 
     if ( $action === 'edit' && $post_id ) {
         classicpack_bpte_render_edit_form( $post_id );
@@ -95,22 +94,22 @@ function classicpack_bpte_render_admin_page() {
  * List posts with pagination, search, and taxonomy filter
  */
 function classicpack_bpte_render_list_table() {
-	$public_post_types = get_post_types( [ 'public' => true ], 'objects' );
-	// Use classicpack_bpte_post_type (not post_type): WordPress admin.php sets $typenow from $_REQUEST['post_type'],
-	// which breaks get_plugin_page_hook() for ClassicPack submenu pages.
-	$selected_type = '';
-	if ( isset( $_GET['classicpack_bpte_post_type'] ) ) {
-		$selected_type = sanitize_key( wp_unslash( $_GET['classicpack_bpte_post_type'] ) );
-	} elseif ( isset( $_GET['post_type'] ) ) {
-		$selected_type = sanitize_key( wp_unslash( $_GET['post_type'] ) );
-	}
-	if ( $selected_type === '' || ! isset( $public_post_types[ $selected_type ] ) ) {
-		$selected_type = (string) key( $public_post_types );
-	}
+    $public_post_types = get_post_types( [ 'public' => true ], 'objects' );
+    // Use classicpack_bpte_post_type (not post_type): WordPress admin.php sets $typenow from $_REQUEST['post_type'],
+    // which breaks get_plugin_page_hook() for ClassicPack submenu pages.
+    $selected_type = '';
+    if ( isset( $_GET['classicpack_bpte_post_type'] ) ) {
+        $selected_type = sanitize_key( wp_unslash( $_GET['classicpack_bpte_post_type'] ) );
+    } elseif ( isset( $_GET['post_type'] ) ) {
+        $selected_type = sanitize_key( wp_unslash( $_GET['post_type'] ) );
+    }
+    if ( $selected_type === '' || ! isset( $public_post_types[ $selected_type ] ) ) {
+        $selected_type = (string) key( $public_post_types );
+    }
 
-    $paged    = max( 1, intval( $_GET['paged'] ?? 1 ) );
+    $paged    = max( 1, absint( wp_unslash( $_GET['paged'] ?? 1 ) ) );
     $per_page = 20;
-    $search   = sanitize_text_field( $_GET['s'] ?? '' );
+    $search   = sanitize_text_field( wp_unslash( $_GET['s'] ?? '' ) );
 
     // Build query args
     $args = [
@@ -123,8 +122,8 @@ function classicpack_bpte_render_list_table() {
     }
 
     // Taxonomy filter
-    $tax_filter = $_GET['tax_filter'] ?? '';
-    $term_id    = intval( $_GET['term_id'] ?? 0 );
+    $tax_filter = isset( $_GET['tax_filter'] ) ? sanitize_key( wp_unslash( $_GET['tax_filter'] ) ) : '';
+    $term_id    = isset( $_GET['term_id'] ) ? absint( wp_unslash( $_GET['term_id'] ) ) : 0;
     if ( $tax_filter && $term_id ) {
         $args['tax_query'] = [
             [
@@ -147,11 +146,11 @@ function classicpack_bpte_render_list_table() {
 
     // Post type + filters form
     echo '<form method="get">';
-	echo '<input type="hidden" name="page" value="' . esc_attr( classicpack_bpte_get_page_slug() ) . '" />';
+    echo '<input type="hidden" name="page" value="' . esc_attr( classicpack_bpte_get_page_slug() ) . '" />';
 
     // Post type selector
     echo '<label>' . __( 'Post type:', 'classicpack' ) . ' ';
-	echo '<select id="classicpack-bpte-post-type-selector" name="classicpack_bpte_post_type" onchange="this.form.submit()">';
+    echo '<select id="classicpack-bpte-post-type-selector" name="classicpack_bpte_post_type" onchange="this.form.submit()">';
     foreach ( $public_post_types as $type => $obj ) {
         $sel = ( $selected_type === $type ) ? 'selected' : '';
         echo '<option value="' . esc_attr( $type ) . '" ' . $sel . '>' . esc_html( $obj->labels->name ) . '</option>';
@@ -162,7 +161,7 @@ function classicpack_bpte_render_list_table() {
     $taxonomies = get_object_taxonomies( $selected_type, 'objects' );
     if ( $taxonomies ) {
         echo '<label>' . __( 'Filter:', 'classicpack' ) . ' ';
-		echo '<select id="classicpack-bpte-tax-filter-selector" name="tax_filter" onchange="this.form.submit()">';
+        echo '<select id="classicpack-bpte-tax-filter-selector" name="tax_filter" onchange="this.form.submit()">';
         echo '<option value="">' . __( 'All taxonomies', 'classicpack' ) . '</option>';
         foreach ( $taxonomies as $tax ) {
             $sel = ( $tax_filter === $tax->name ) ? 'selected' : '';
@@ -194,7 +193,7 @@ function classicpack_bpte_render_list_table() {
     echo '<thead><tr><th>' . __( 'Image', 'classicpack' ) . '</th><th>ID</th><th>Title</th><th>Author</th><th>Date</th><th>Actions</th></tr></thead><tbody>';
 
     foreach ( $query->posts as $post ) {
-		$edit_url      = admin_url( 'admin.php?page=' . classicpack_bpte_get_page_slug() . '&action=edit&post_id=' . $post->ID . '&classicpack_bpte_post_type=' . rawurlencode( $selected_type ) );
+        $edit_url      = admin_url( 'admin.php?page=' . classicpack_bpte_get_page_slug() . '&action=edit&post_id=' . $post->ID . '&classicpack_bpte_post_type=' . rawurlencode( $selected_type ) );
         $view_url      = get_permalink( $post );
         $thumbnail_id  = get_post_thumbnail_id( $post->ID );
         $thumbnail_url = $thumbnail_id ? wp_get_attachment_image_url( $thumbnail_id, [ 48, 48 ] ) : '';
@@ -224,9 +223,9 @@ function classicpack_bpte_render_list_table() {
 
     // Pagination
     $total_pages = $query->max_num_pages;
-	if ( $total_pages > 1 ) {
-		$base_url = remove_query_arg( array( 'paged', 'post_type' ) );
-		echo '<div class="tablenav"><div class="tablenav-pages">';
+    if ( $total_pages > 1 ) {
+        $base_url = remove_query_arg( [ 'paged', 'post_type' ] );
+        echo '<div class="tablenav"><div class="tablenav-pages">';
         echo paginate_links(
             [
                 'base'      => add_query_arg( 'paged', '%#%', $base_url ),
@@ -253,8 +252,8 @@ function classicpack_bpte_render_edit_form( int $post_id ) {
         return;
     }
 
-    if ( isset( $_POST['classicpack_bpte_nonce'] ) && wp_verify_nonce( $_POST['classicpack_bpte_nonce'], 'classicpack_bpte_save_' . $post_id ) ) {
-        classicpack_bpte_save_post( $post_id, $_POST['classicpack_bpte'] ?? [] );
+    if ( isset( $_POST['classicpack_bpte_nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['classicpack_bpte_nonce'] ), 'classicpack_bpte_save_' . $post_id ) ) {
+        classicpack_bpte_save_post( $post_id, wp_unslash( $_POST['classicpack_bpte'] ?? [] ) );
         $post = get_post( $post_id ); // reload
         echo '<div class="updated"><p>' . __( 'Post updated.', 'classicpack' ) . '</p></div>';
     }
@@ -269,7 +268,11 @@ function classicpack_bpte_render_edit_form( int $post_id ) {
     wp_enqueue_script( 'classicpack-bpte-editor-js' );
 
     echo '<div class="wrap">
-        <h1>' . sprintf( __( 'Edit %s', 'classicpack' ), esc_html( $post->post_title ) ) . '</h1>';
+        <h1>' . sprintf(
+            /* translators: %s: post title */
+        __( 'Edit %s', 'classicpack' ),
+        esc_html( $post->post_title )
+    ) . '</h1>';
 
         // Show notice if post type was just changed
     if ( isset( $_GET['post_type_changed'] ) && $_GET['post_type_changed'] === '1' ) {
@@ -282,7 +285,7 @@ function classicpack_bpte_render_edit_form( int $post_id ) {
         // Action links
         $view_url = get_permalink( $post->ID );
         $edit_url = get_edit_post_link( $post->ID );
-		$main_url = admin_url( 'admin.php?page=' . classicpack_bpte_get_page_slug() . '&classicpack_bpte_post_type=' . rawurlencode( $post->post_type ) );
+        $main_url = admin_url( 'admin.php?page=' . classicpack_bpte_get_page_slug() . '&classicpack_bpte_post_type=' . rawurlencode( $post->post_type ) );
 
         echo '<div class="classicpack-bpte-action-links">
             <a href="' . esc_url( $main_url ) . '" class="button button-secondary">' . __( '← Back to Main Page', 'classicpack' ) . '</a>
@@ -321,7 +324,7 @@ function classicpack_bpte_render_edit_form( int $post_id ) {
     foreach ( $users as $user ) {
         $roles        = $user->roles;
         $primary_role = $roles ? ucfirst( $roles[0] ) : 'No Role';
-        $selected     = ( $user->ID == $post->post_author ) ? 'selected' : '';
+        $selected     = ( (int) $user->ID === (int) $post->post_author ) ? 'selected' : '';
         echo '<option value="' . esc_attr( $user->ID ) . '" ' . $selected . '>';
         echo esc_html( $user->display_name ) . ' (' . esc_html( $primary_role ) . ' - ID: ' . $user->ID . ')';
         echo '</option>';
@@ -510,7 +513,7 @@ function classicpack_bpte_render_attachments_list( $post_id ) {
         $out .= '<tr>';
         $out .= '<td class="classicpack-bpte-attachment-preview">' . ( $thumb ? $thumb : '—' ) . '</td>';
         $out .= '<td>' . (int) $attachment->ID . ( $is_featured ? ' <span class="classicpack-bpte-badge-featured">' . esc_html__( 'Featured', 'classicpack' ) . '</span>' : '' ) . '</td>';
-        $out .= '<td>' . esc_html( $attachment->post_title ?: __( '(no title)', 'classicpack' ) ) . '</td>';
+        $out .= '<td>' . esc_html( ! empty( $attachment->post_title ) ? $attachment->post_title : __( '(no title)', 'classicpack' ) ) . '</td>';
         $out .= '<td><code>' . esc_html( $attachment->post_mime_type ) . '</code></td>';
         $out .= '<td>';
         if ( $edit_link ) {
@@ -544,20 +547,20 @@ function classicpack_bpte_save_post( int $post_id, array $data ) {
             // Change post type
             $result = set_post_type( $post_id, $new_post_type );
 
-			if ( $result ) {
-				// Redirect back to the edit page to refresh with new post type
-				wp_safe_redirect(
-					add_query_arg(
-						array(
-							'page'                       => classicpack_bpte_get_page_slug(),
-							'action'                     => 'edit',
-							'post_id'                    => $post_id,
-							'post_type_changed'          => '1',
-							'classicpack_bpte_post_type' => $new_post_type,
-						),
-						admin_url( 'admin.php' )
-					)
-				);
+            if ( $result ) {
+                // Redirect back to the edit page to refresh with new post type
+                wp_safe_redirect(
+                    add_query_arg(
+                        [
+                            'page'                       => classicpack_bpte_get_page_slug(),
+                            'action'                     => 'edit',
+                            'post_id'                    => $post_id,
+                            'post_type_changed'          => '1',
+                            'classicpack_bpte_post_type' => $new_post_type,
+                        ],
+                        admin_url( 'admin.php' )
+                    )
+                );
                 exit;
             }
         }
