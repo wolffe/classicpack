@@ -1,0 +1,156 @@
+/* ClassicPack → Modules screen (.classicpack-modules-wrap) */
+:root {
+    --cp-color-primary: #009432;
+}
+
+.classicpack-modules-wrap .classicpack-module-list {
+	list-style: none;
+	margin: 0 0 1.25rem;
+	padding: 0;
+	max-width: 56rem;
+	border: 1px solid #e8e8e8;
+	border-radius: 6px;
+	background: #fff;
+	overflow: hidden;
+}
+
+.classicpack-modules-wrap .classicpack-module-row {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.875rem;
+	padding: 0.85rem 1rem;
+	border-top: 1px solid #f0f0f1;
+}
+
+.classicpack-modules-wrap .classicpack-module-list .classicpack-module-row:first-child {
+	border-top: 0;
+}
+
+.classicpack-modules-wrap .classicpack-module-row.is-active {
+	background: #f9fafb;
+}
+
+.classicpack-modules-wrap .classicpack-module-row__main {
+	flex: 1;
+	min-width: 0;
+	padding-top: 1px;
+}
+
+.classicpack-modules-wrap .classicpack-module-row__actions {
+	flex-shrink: 0;
+	align-self: center;
+}
+
+.classicpack-modules-wrap .classicpack-module-row__action--inactive {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+
+.classicpack-modules-wrap .classicpack-module-row__title {
+	margin: 0 0 0.2rem;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.35;
+}
+
+.classicpack-modules-wrap .classicpack-module-row__desc {
+	margin: 0;
+	font-size: 13px;
+	line-height: 1.5;
+	color: #646970;
+}
+
+.classicpack-modules-wrap .classicpack-module-category {
+	margin: 0 0 2rem;
+	max-width: 56rem;
+}
+
+.classicpack-modules-wrap .classicpack-module-category__heading {
+	margin: 0 0 0.65rem;
+	padding-bottom: 0.45rem;
+	font-size: 15px;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	color: #1d2327;
+	border-bottom: 1px solid #ececec;
+}
+
+.classicpack-modules-wrap .classicpack-module-category:first-child .classicpack-module-category__heading {
+	margin-top: 0;
+}
+
+.classicpack-modules-wrap .classicpack-save-sticky {
+	margin-top: 0.5rem;
+	padding: 1rem 0 0;
+	max-width: 56rem;
+}
+
+/**
+ * Toggle switch (modules screen only).
+ */
+.classicpack-modules-wrap input[type="checkbox"].classicpack-ui-toggle {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	-webkit-tap-highlight-color: transparent;
+	flex-shrink: 0;
+	width: auto;
+	height: auto;
+	margin: 2px 0 0;
+	vertical-align: middle;
+	position: relative;
+	border: 0;
+	outline: 0;
+	cursor: pointer;
+	background: none;
+	box-shadow: none;
+}
+
+.classicpack-modules-wrap input[type="checkbox"].classicpack-ui-toggle:focus {
+	box-shadow: none;
+	outline: 1px solid transparent;
+}
+
+.classicpack-modules-wrap input[type="checkbox"].classicpack-ui-toggle:focus-visible {
+	outline: 2px solid var(--cp-color-primary, #2271b1);
+	outline-offset: 2px;
+}
+
+.classicpack-modules-wrap input[type="checkbox"].classicpack-ui-toggle::after {
+	content: "";
+	width: 36px;
+	height: 18px;
+	display: inline-block;
+	background-color: #a7aaad;
+	border-radius: 72px;
+	box-shadow: 0 0 12px rgb(0 0 0 / 15%) inset;
+}
+
+.classicpack-modules-wrap input[type="checkbox"].classicpack-ui-toggle::before {
+	content: "";
+	width: 14px;
+	height: 14px;
+	display: block;
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	margin: 0;
+	border-radius: 50%;
+	background-color: #ffffff;
+}
+
+.classicpack-modules-wrap input[type="checkbox"].classicpack-ui-toggle:checked::before {
+	left: 20px;
+}
+
+.classicpack-modules-wrap input[type="checkbox"].classicpack-ui-toggle,
+.classicpack-modules-wrap input[type="checkbox"].classicpack-ui-toggle::before,
+.classicpack-modules-wrap input[type="checkbox"].classicpack-ui-toggle::after,
+.classicpack-modules-wrap input[type="checkbox"].classicpack-ui-toggle:checked::before,
+.classicpack-modules-wrap input[type="checkbox"].classicpack-ui-toggle:checked::after {
+	transition: background-color 0.15s ease, left 0.15s ease;
+}
+
+.classicpack-modules-wrap input[type="checkbox"].classicpack-ui-toggle:checked::after {
+	background-color: var(--cp-color-primary, #009432);
+}
