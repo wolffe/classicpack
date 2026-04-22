@@ -5,6 +5,11 @@
  * Adds a post-type dropdown and warning in the publish box on post.php for
  * public post types. Intended for ClassicPress / Classic Editor.
  *
+ * The switch must not use a nested <form>: the main editor is already inside
+ * a form; nested forms are invalid, so the browser submits the outer form and
+ * the type change never runs. A separate form in admin_footer and the HTML5
+ * `form` attribute on the select/button associate the controls with that form.
+ *
  * @package ClassicPack
  */
 
@@ -15,6 +20,44 @@ if ( ! defined( 'ABSPATH' ) ) {
 add_action( 'post_submitbox_misc_actions', 'classicpack_post_type_switcher_render', 20 );
 add_action( 'admin_post_classicpack_switch_post_type', 'classicpack_post_type_switcher_handle' );
 add_action( 'admin_notices', 'classicpack_post_type_switcher_admin_notice' );
+
+/**
+ * ID of the detached admin-footer form (HTML5 `form` attribute on controls).
+ */
+function classicpack_post_type_switcher_get_form_id() {
+    return 'classicpack-pts-form';
+}
+
+/**
+ * Print the hidden admin-post form once per screen (not nested in the post form).
+ *
+ * @param int $post_id Post ID.
+ * @return void
+ */
+function classicpack_post_type_switcher_print_hidden_form( $post_id ) {
+    $post_id = (int) $post_id;
+    if ( $post_id <= 0 ) {
+        return;
+    }
+
+    $form_id = classicpack_post_type_switcher_get_form_id();
+    $action  = admin_url( 'admin-post.php' );
+    ?>
+    <form
+        id="<?php echo esc_attr( $form_id ); ?>"
+        class="classicpack-pts-form"
+        method="post"
+        action="<?php echo esc_url( $action ); ?>"
+        style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;"
+        tabindex="-1"
+        aria-hidden="true"
+    >
+        <input type="hidden" name="action" value="classicpack_switch_post_type" />
+        <input type="hidden" name="post_id" value="<?php echo esc_attr( (string) $post_id ); ?>" />
+        <?php wp_nonce_field( 'classicpack_switch_post_' . $post_id, '_wpnonce', false, true ); ?>
+    </form>
+    <?php
+}
 
 /**
  * Output switcher UI in the publish meta box (existing posts only).
@@ -60,36 +103,90 @@ function classicpack_post_type_switcher_render() {
         return;
     }
 
-    $action = esc_url( admin_url( 'admin-post.php' ) );
+    static $classicpack_post_type_switcher_footer_done = false;
+    if ( ! $classicpack_post_type_switcher_footer_done ) {
+        $classicpack_post_type_switcher_footer_done = true;
+        add_action(
+            'admin_footer',
+            static function () use ( $post_id ) {
+                classicpack_post_type_switcher_print_hidden_form( $post_id );
+            },
+            100
+        );
+    }
+
+    $form_id = classicpack_post_type_switcher_get_form_id();
     ?>
     <div class="misc-pub-section misc-pub-post-type-switcher">
         <p class="howto" style="margin-top:8px;">
             <?php esc_html_e( 'Switching type can leave taxonomies, meta, or URLs a poor fit for the new type. Review the entry and permalinks after saving.', 'classicpack' ); ?>
         </p>
-        <form method="post" action="<?php echo esc_url( $action ); ?>" style="margin-top:6px;">
-            <?php wp_nonce_field( 'classicpack_switch_post_' . $post_id ); ?>
-            <input type="hidden" name="action" value="classicpack_switch_post_type" />
-            <input type="hidden" name="post_id" value="<?php echo esc_attr( (string) $post_id ); ?>" />
+        <p style="margin-top:6px;">
             <label for="classicpack-new-post-type" class="screen-reader-text">
                 <?php esc_html_e( 'New post type', 'classicpack' ); ?>
             </label>
-            <select name="new_post_type" id="classicpack-new-post-type" required>
+            <select
+                name="new_post_type"
+                id="classicpack-new-post-type"
+                form="<?php echo esc_attr( $form_id ); ?>"
+                required
+            >
                 <option value="" disabled><?php esc_html_e( 'Action to take…', 'classicpack' ); ?></option>
                 <?php foreach ( $targets as $name => $pto ) : ?>
-                    <option value="<?php echo esc_attr( $name ); ?>"<?php selected( $post->post_type, $name ); ?>><?php echo esc_html( $pto->labels->singular_name ); ?></option>
+                    <option value="<?php echo esc_attr( $name ); ?>"<?php selected( $post->post_type, $name ); ?>>
+                        <?php echo esc_html( $pto->labels->singular_name ); ?>
+                    </option>
                 <?php endforeach; ?>
             </select>
             <?php
             submit_button(
                 __( 'Switch type', 'classicpack' ),
                 'secondary small',
-                'submit',
-                false
+                'classicpack-pts-submit',
+                false,
+                [
+                    'form' => $form_id,
+                ]
             );
             ?>
-        </form>
+        </p>
     </div>
     <?php
+}
+
+/**
+ * Change an item’s post type. Some ClassicPress builds do not load `wp_set_post_type()`; use `wp_update_post` when missing.
+ *
+ * @param int    $post_id  Post ID.
+ * @param string $new_type Sanitized post type slug.
+ * @return bool|WP_Error True on success, false if the type did not change, or a WP_Error from the API.
+ */
+function classicpack_post_type_switcher_set_post_type( $post_id, $new_type ) {
+    $post_id  = (int) $post_id;
+    $new_type = (string) $new_type;
+    if ( $post_id <= 0 || '' === $new_type ) {
+        return false;
+    }
+
+    if ( function_exists( 'wp_set_post_type' ) ) {
+        $result = wp_set_post_type( $post_id, $new_type );
+        if ( is_wp_error( $result ) ) {
+            return $result;
+        }
+    } else {
+        $updated = wp_update_post(
+            [
+                'ID'        => $post_id,
+                'post_type' => $new_type,
+            ],
+            true
+        );
+        if ( is_wp_error( $updated ) ) {
+            return $updated;
+        }
+    }
+
+    return get_post_type( $post_id ) === $new_type;
 }
 
 /**
@@ -135,16 +232,12 @@ function classicpack_post_type_switcher_handle() {
         exit;
     }
 
-    $updated = wp_update_post(
-        [
-            'ID'        => $post_id,
-            'post_type' => $new_type,
-        ],
-        true
-    );
-
-    if ( is_wp_error( $updated ) ) {
-        wp_die( esc_html( $updated->get_error_message() ), esc_html__( 'Could not switch type', 'classicpack' ), 500 );
+    $switched = classicpack_post_type_switcher_set_post_type( $post_id, $new_type );
+    if ( is_wp_error( $switched ) ) {
+        wp_die( esc_html( $switched->get_error_message() ), esc_html__( 'Could not switch type', 'classicpack' ), 500 );
+    }
+    if ( ! $switched || get_post_type( $post_id ) !== $new_type ) {
+        wp_die( esc_html__( 'Could not switch type.', 'classicpack' ), esc_html__( 'Could not switch type', 'classicpack' ), 500 );
     }
 
     wp_safe_redirect(

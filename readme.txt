@@ -2,10 +2,10 @@
 Contributors: wolffe
 Tags: classicpress, modules, toolkit, admin, utilities
 Requires at least: 6.2
-Requires PHP: 8.5
+Requires PHP: 8.0
 Requires CP: 2.5
 Tested up to: 6.9.1
-Stable tag: 0.1.0
+Stable tag: 0.2.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -23,10 +23,11 @@ ClassicPack groups optional features into **modules**. Each module can be switch
 * **Delete Post with Attachments** — On permanent delete, clean up uploads tied to that post when safe.
 * **Users Online** — See who is on the site and a dashboard summary.
 * **User Manager** — Optional Users screen columns and members-only content helpers.
+* **User Content Overview** — On a user’s profile, lists counts and admin links for content they author (and related rows such as media or customer orders), for cleanup and reassignment.
 * **Post type switcher** — On the Classic post editor, change an item’s post type (with a clear warning).
 * **Duplicate post** — Row action to duplicate a public post type as a draft, including meta and terms.
 
-Requirements: ClassicPress 2.5+ (or WordPress 6.2+), PHP 8.5+.
+Requirements: ClassicPress 2.5+ (or WordPress 6.2+), PHP 8.0+.
 
 == Installation ==
 
@@ -46,5 +47,11 @@ Enabled modules are stored in the `classicpack_modules` option. Individual modul
 
 == Changelog ==
 
+= 0.2.0 =
+* Add User Content Overview module (profile content counts and admin links)
+* Fix post type switcher nested-form submit (use detached form and HTML5 form association and fall back when wp_set_post_type is unavailable)
+* Lower PHP requirement to 8.0
+* Update documentation and readme
+
 = 0.1.0 =
-* Initial release.
+* Initial release

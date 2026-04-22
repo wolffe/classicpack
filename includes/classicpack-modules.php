@@ -64,6 +64,11 @@ function classicpack_get_module_registry() {
 			'description' => __( 'Optional registration and last-login columns on the Users screen (turn each off if your theme already shows them). You can also hide posts or pages from guests until they sign in.', 'classicpack' ),
 			'file'        => $base . 'user-manager/user-manager.php',
 		),
+		'user-content'           => array(
+			'label'       => __( 'User Content Overview', 'classicpack' ),
+			'description' => __( 'On a user’s profile, lists what they “own” in the database: counts by post type (including revisions and other CPTs), media, and optional links for WooCommerce customer orders. Helps when reassigning or deleting accounts.', 'classicpack' ),
+			'file'        => $base . 'user-content/user-content.php',
+		),
 		'post-type-switcher'     => array(
 			'label'       => __( 'Post type switcher', 'classicpack' ),
 			'description' => __( 'On the Classic post editor, switch the item to another public post type. Shows a short warning before you confirm.', 'classicpack' ),
@@ -257,7 +262,7 @@ function classicpack_render_modules_page() {
 		array(
 			'id'    => 'users',
 			'title' => __( 'Users', 'classicpack' ),
-			'slugs' => array( 'email-commenters', 'users-online', 'user-manager' ),
+			'slugs' => array( 'email-commenters', 'users-online', 'user-manager', 'user-content' ),
 		),
 	);
 	$enabled   = array_fill_keys( classicpack_get_enabled_modules(), true );
