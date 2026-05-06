@@ -58,6 +58,7 @@ Enable these on the **ClassicPack** screen. Nothing here runs when the module is
 | **User Content Overview** | On a user’s profile, shows counts and links for content that user “owns” (by post type, media, optional Woo customer orders) for cleanup or reassignment. | **Users** → edit a user |
 | **Post type switcher** | In the **classic** editor, switch an existing item to another public post type (with a warning). | **Posts** or **Pages** (or CPT) → edit, Publish box |
 | **Duplicate post** | Row action to duplicate a public post type as a draft (content, meta, terms, featured image as applicable). | Post type list tables |
+| **User Avatar** | Profile picture from the Media Library on the user profile screen; replaces Gravatar when set (legacy meta key unchanged). | **Users → Profile** / **Users → Edit user** |
 
 Some modules are Classic-editor specific or list-table specific. If you use only the block editor, test before relying on a module.
 
@@ -65,13 +66,29 @@ Some modules are Classic-editor specific or list-table specific. If you use only
 
 ## Requirements
 
-- ClassicPress 2.5+ or WordPress 6.2+  
-- PHP 8.0+  
-
-## License
-
-GPL v3 or later. See [readme.txt](readme.txt) and the plugin header in `classicpack.php`.
+- ClassicPress 2.5+ or WordPress 6.2+
+- PHP 8.0+
 
 ## Changelog
 
-See the **Changelog** section in [readme.txt](readme.txt) for the released version history.
+Release notes match [readme.txt](readme.txt) (plugin directory listing).
+
+### 0.3.0
+
+- User Avatar module: rename profile form table class from `easy-author-avatar-image-form-table` to `author-avatar-image-form-table`
+
+### 0.2.1
+
+- Add User Avatar module (profile picture from Media Library, legacy user meta key retained)
+- Remove standalone Easy Author Avatar-style enable option; uninstall clears the legacy `easy_author_avatar_image_option` row if present
+
+### 0.2.0
+
+- Add User Content Overview module (profile content counts and admin links)
+- Fix post type switcher nested-form submit (use detached form and HTML5 form association and fall back when wp_set_post_type is unavailable)
+- Lower PHP requirement to 8.0
+- Update documentation and readme
+
+### 0.1.0
+
+- Initial release

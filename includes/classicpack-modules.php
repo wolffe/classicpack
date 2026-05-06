@@ -79,6 +79,11 @@ function classicpack_get_module_registry() {
 			'description' => __( 'Adds a “Duplicate” row action on list screens for public post types. Creates a draft copy with content, meta, terms, and featured image.', 'classicpack' ),
 			'file'        => $base . 'duplicate-post/duplicate-post.php',
 		),
+		'user-avatar'            => array(
+			'label'       => __( 'User Avatar', 'classicpack' ),
+			'description' => __( 'Let users pick a profile picture from the Media Library on their profile; uses it instead of Gravatar where avatars are shown.', 'classicpack' ),
+			'file'        => $base . 'user-avatar/user-avatar.php',
+		),
 	);
 }
 
@@ -115,6 +120,11 @@ function classicpack_get_module_admin_action_config() {
 			'cap'  => 'list_users',
 		),
 		'delete-post-with-attachments' => array(
+			'mode'     => 'details',
+			'anchored' => true,
+			'cap'      => 'manage_options',
+		),
+		'user-avatar'                  => array(
 			'mode'     => 'details',
 			'anchored' => true,
 			'cap'      => 'manage_options',
@@ -262,7 +272,7 @@ function classicpack_render_modules_page() {
 		array(
 			'id'    => 'users',
 			'title' => __( 'Users', 'classicpack' ),
-			'slugs' => array( 'email-commenters', 'users-online', 'user-manager', 'user-content' ),
+			'slugs' => array( 'email-commenters', 'users-online', 'user-manager', 'user-content', 'user-avatar' ),
 		),
 	);
 	$enabled   = array_fill_keys( classicpack_get_enabled_modules(), true );

@@ -25,6 +25,7 @@ function classicpack_uninstall_single_site() {
 		'classicpack_user_manager_options',
 		'useronline_most',
 		'classicpress_auto_save_images_options',
+		'easy_author_avatar_image_option',
 	);
 
 	foreach ( $options as $option_name ) {

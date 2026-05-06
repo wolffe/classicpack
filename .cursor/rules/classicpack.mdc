@@ -17,6 +17,7 @@ Use this project’s rules when editing the ClassicPack plugin.
 
 ## When editing
 
+- When you change release notes under `== Changelog ==` in `readme.txt`, update the **Changelog** section in `README.md` in the same change (keep wording aligned).
 - Preserve backward compatibility for existing post meta and options.
 - Run PHPCS/CPCS if the project uses them.
 - Do not remove or repurpose existing options/keys without a migration path.

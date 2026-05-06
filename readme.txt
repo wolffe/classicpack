@@ -1,11 +1,11 @@
 === ClassicPack ===
-Contributors: wolffe
+Contributors: butterflymedia
 Tags: classicpress, modules, toolkit, admin, utilities
 Requires at least: 6.2
 Requires PHP: 8.0
 Requires CP: 2.5
 Tested up to: 6.9.1
-Stable tag: 0.2.0
+Stable tag: 0.3.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -27,6 +27,8 @@ ClassicPack groups optional features into **modules**. Each module can be switch
 * **Post type switcher** — On the Classic post editor, change an item’s post type (with a clear warning).
 * **Duplicate post** — Row action to duplicate a public post type as a draft, including meta and terms.
 
+* **User Avatar** — Pick a profile picture from the Media Library on your profile; shown instead of Gravatar where avatars appear.
+
 Requirements: ClassicPress 2.5+ (or WordPress 6.2+), PHP 8.0+.
 
 == Installation ==
@@ -46,6 +48,13 @@ Some modules target the Classic editor or list tables only. Enable modules indiv
 Enabled modules are stored in the `classicpack_modules` option. Individual modules may add their own options where documented.
 
 == Changelog ==
+
+= 0.3.0 =
+* User Avatar module: rename profile form table class from `easy-author-avatar-image-form-table` to `author-avatar-image-form-table`
+
+= 0.2.1 =
+* Add User Avatar module (profile picture from Media Library, legacy meta key retained)
+* Remove legacy standalone Easy Author Avatar Image option usage; uninstall clears old option key
 
 = 0.2.0 =
 * Add User Content Overview module (profile content counts and admin links)
