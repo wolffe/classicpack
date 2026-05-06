@@ -5,11 +5,11 @@ Requires at least: 6.2
 Requires PHP: 8.0
 Requires CP: 2.5
 Tested up to: 6.9.1
-Stable tag: 0.3.0
+Stable tag: 0.3.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-A modular toolkit for ClassicPress and WordPress. Enable only the features you need from one admin screen.
+A modular toolkit for ClassicPress and WordPress. Enable modules from the ClassicPack screen in ClassicPress or WordPress.
 
 == Description ==
 
@@ -17,7 +17,7 @@ ClassicPack groups optional features into **modules**. Each module can be switch
 
 **Examples of what you can enable:**
 
-* **Core Redirects Manager** — Inspect and remove automatic redirects WordPress keeps when URLs change.
+* **Core Redirects Manager** — Inspect and remove automatic redirects that ClassicPress and WordPress store when URLs change.
 * **Email Commenters** — Send one email to everyone who commented on a post or page.
 * **Auto Save Images** — Pull remote images into your Media Library when you publish.
 * **Delete Post with Attachments** — On permanent delete, clean up uploads tied to that post when safe.
@@ -48,6 +48,11 @@ Some modules target the Classic editor or list tables only. Enable modules indiv
 Enabled modules are stored in the `classicpack_modules` option. Individual modules may add their own options where documented.
 
 == Changelog ==
+
+= 0.3.1 =
+* Align short descriptions with ClassicPress and WordPress
+* Add Plugins list link to the ClassicPack modules screen
+* Clarify Core Redirects Manager description for ClassicPress and WordPress
 
 = 0.3.0 =
 * User Avatar module: rename profile form table class from `easy-author-avatar-image-form-table` to `author-avatar-image-form-table`

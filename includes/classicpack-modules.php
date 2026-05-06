@@ -36,7 +36,7 @@ function classicpack_get_module_registry() {
 	return array(
 		'core-redirects-manager' => array(
 			'label'       => __( 'Core Redirects Manager', 'classicpack' ),
-			'description' => __( 'Lists automatic redirects WordPress keeps when you change a post URL. Remove ones you do not need to tidy SEO and old links.', 'classicpack' ),
+			'description' => __( 'Lists automatic redirects that ClassicPress and WordPress store when you change a post URL. Remove ones you do not need to tidy SEO and old links.', 'classicpack' ),
 			'file'        => $base . 'core-redirects-manager/core-redirects-manager.php',
 		),
 		'email-commenters'       => array(
@@ -167,11 +167,24 @@ function classicpack_get_enabled_modules() {
 }
 
 /**
+ * Add Plugins list link to the ClassicPack modules screen.
+ *
+ * @param string[] $links Existing action links.
+ * @return string[]
+ */
+function classicpack_plugin_action_links( $links ) {
+	$url          = esc_url( admin_url( 'admin.php?page=' . classicpack_get_menu_slug() ) );
+	$modules_link = '<a href="' . $url . '">' . esc_html__( 'Modules', 'classicpack' ) . '</a>';
+	return array_merge( $links, array( $modules_link ) );
+}
+
+/**
  * Bootstrap hooks.
  *
  * @return void
  */
 function classicpack_modules_init() {
+	add_filter( 'plugin_action_links_' . plugin_basename( CLASSICPACK_FILE ), 'classicpack_plugin_action_links' );
 	add_action( 'admin_menu', 'classicpack_register_admin_menu', 5 );
 	add_action( 'admin_init', 'classicpack_register_settings' );
 	add_action( 'admin_enqueue_scripts', 'classicpack_enqueue_modules_screen_assets' );

@@ -73,6 +73,12 @@ Some modules are Classic-editor specific or list-table specific. If you use only
 
 Release notes match [readme.txt](readme.txt) (plugin directory listing).
 
+### 0.3.1
+
+- Align short descriptions with ClassicPress and WordPress
+- Add Plugins list link to the ClassicPack modules screen
+- Clarify Core Redirects Manager description for ClassicPress and WordPress
+
 ### 0.3.0
 
 - User Avatar module: rename profile form table class from `easy-author-avatar-image-form-table` to `author-avatar-image-form-table`
