@@ -5,7 +5,7 @@ Requires at least: 6.2
 Requires PHP: 8.0
 Requires CP: 2.5
 Tested up to: 6.9.1
-Stable tag: 0.3.1
+Stable tag: 0.3.2
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -48,6 +48,10 @@ Some modules target the Classic editor or list tables only. Enable modules indiv
 Enabled modules are stored in the `classicpack_modules` option. Individual modules may add their own options where documented.
 
 == Changelog ==
+
+= 0.3.2 =
+* Remove the non-functional Details action for Delete Post with Attachments and User Avatar on the modules screen
+* Add the `classicpack-ui-toggle` class to plugin admin checkboxes (Auto Save Images, User Manager, and post editor or meta box hooks)
 
 = 0.3.1 =
 * Align short descriptions with ClassicPress and WordPress

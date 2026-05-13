@@ -73,6 +73,11 @@ Some modules are Classic-editor specific or list-table specific. If you use only
 
 Release notes match [readme.txt](readme.txt) (plugin directory listing).
 
+### 0.3.2
+
+- Remove the non-functional Details action for Delete Post with Attachments and User Avatar on the modules screen
+- Add the `classicpack-ui-toggle` class to plugin admin checkboxes (Auto Save Images, User Manager, and post editor or meta box hooks)
+
 ### 0.3.1
 
 - Align short descriptions with ClassicPress and WordPress

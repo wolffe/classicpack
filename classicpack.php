@@ -5,7 +5,7 @@
  * Description: A modular toolkit for ClassicPress and WordPress. Enable modules from the ClassicPack screen in ClassicPress or WordPress.
  * Author: Ciprian Popescu
  * Author URI: https://getbutterfly.com/
- * Version: 0.3.1
+ * Version: 0.3.2
  * Requires at least: 6.2
  * Requires PHP: 8.0
  * Requires CP: 2.5
@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'CLASSICPACK_VERSION', '0.3.1' );
+define( 'CLASSICPACK_VERSION', '0.3.2' );
 define( 'CLASSICPACK_FILE', __FILE__ );
 define( 'CLASSICPACK_PATH', dirname( __FILE__ ) );
 
