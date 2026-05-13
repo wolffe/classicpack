@@ -19,6 +19,7 @@
 	align-items: flex-start;
 	gap: 0.875rem;
 	padding: 0.85rem 1rem;
+    margin-bottom: 0;
 	border-top: 1px solid #f0f0f1;
 }
 
@@ -55,7 +56,7 @@
 
 .classicpack-modules-wrap .classicpack-module-row__desc {
 	margin: 0;
-	font-size: 13px;
+	font-size: 12px;
 	line-height: 1.5;
 	color: #646970;
 }
@@ -106,6 +107,7 @@
 	box-shadow: none;
 }
 
+/*
 .classicpack-modules-wrap input[type="checkbox"].classicpack-ui-toggle:focus {
 	box-shadow: none;
 	outline: 1px solid transparent;
@@ -115,6 +117,7 @@
 	outline: 2px solid var(--cp-color-primary, #2271b1);
 	outline-offset: 2px;
 }
+/**/
 
 .classicpack-modules-wrap input[type="checkbox"].classicpack-ui-toggle::after {
 	content: "";
@@ -152,5 +155,5 @@
 }
 
 .classicpack-modules-wrap input[type="checkbox"].classicpack-ui-toggle:checked::after {
-	background-color: var(--cp-color-primary, #009432);
+	background-color: #05133b;
 }
