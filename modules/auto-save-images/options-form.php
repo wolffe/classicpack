@@ -25,24 +25,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<div id="classicpress-auto-save-images">
 		<form action="" method="post">
-
 			<?php wp_nonce_field( 'classicpress_auto_save_images_options', 'classicpress_auto_save_images_nonce' ); ?>
 
 			<p>
 				<label for="tmb"><?php esc_html_e( 'Disable thumbnails:', 'classicpack' ); ?></label>
-				<input type="checkbox" id="tmb" name="tmb" value="yes" <?php checked( 'yes', isset( $options['tmb'] ) ? $options['tmb'] : '' ); ?>/> <?php esc_html_e( 'Yes', 'classicpack' ); ?>
+				<input type="checkbox" id="tmb" class="classicpack-ui-toggle" name="tmb" value="yes" <?php checked( 'yes', isset( $options['tmb'] ) ? $options['tmb'] : '' ); ?>/> <?php esc_html_e( 'Yes', 'classicpack' ); ?>
 				<span class="option-desc"><?php esc_html_e( 'When checked, WordPress will not generate resized thumbnail versions for images downloaded by this plugin.', 'classicpack' ); ?></span>
 			</p>
 
 			<p>
 				<label for="switch"><?php esc_html_e( 'Per-post skip toggle:', 'classicpack' ); ?></label>
-				<input type="checkbox" id="switch" name="switch" value="yes" <?php checked( 'yes', isset( $options['switch'] ) ? $options['switch'] : '' ); ?>/> <?php esc_html_e( 'Yes', 'classicpack' ); ?>
+				<input type="checkbox" id="switch" class="classicpack-ui-toggle" name="switch" value="yes" <?php checked( 'yes', isset( $options['switch'] ) ? $options['switch'] : '' ); ?>/> <?php esc_html_e( 'Yes', 'classicpack' ); ?>
 				<span class="option-desc"><?php esc_html_e( 'When checked, a toggle appears in each post’s editor (classic and block) to skip remote images for that post.', 'classicpack' ); ?></span>
 			</p>
 
 			<p>
 				<label for="post-tmb"><?php esc_html_e( 'Auto featured image:', 'classicpack' ); ?></label>
-				<input type="checkbox" id="post-tmb" name="post-tmb" value="yes" <?php checked( 'yes', isset( $options['post-tmb'] ) ? $options['post-tmb'] : '' ); ?>/> <?php esc_html_e( 'Yes', 'classicpack' ); ?>
+				<input type="checkbox" id="post-tmb" class="classicpack-ui-toggle" name="post-tmb" value="yes" <?php checked( 'yes', isset( $options['post-tmb'] ) ? $options['post-tmb'] : '' ); ?>/> <?php esc_html_e( 'Yes', 'classicpack' ); ?>
 				<span class="option-desc"><?php esc_html_e( 'When checked, the first remote image found is set as the featured image after download.', 'classicpack' ); ?></span>
 			</p>
 

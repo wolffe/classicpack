@@ -128,7 +128,7 @@ function classicpack_user_restriction_render_meta_box( $post ) {
 	?>
     <p>
         <label>
-            <input type="checkbox" name="classicpack_has_user_restriction" value="1" <?php checked( $restricted, 1 ); ?> />
+            <input type="checkbox" class="classicpack-ui-toggle" name="classicpack_has_user_restriction" value="1" <?php checked( $restricted, 1 ); ?> />
             <?php esc_html_e( 'Restrict to logged-in users', 'classicpack' ); ?>
         </label>
     </p>

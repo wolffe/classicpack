@@ -257,7 +257,7 @@ function classicpress_auto_save_images_remove_tmb( $sizes ) {
 function classicpress_auto_save_images_submit_box() {
 	$options = get_option( 'classicpress_auto_save_images_options' );
 	if ( is_array( $options ) && ! empty( $options['switch'] ) && 'yes' === $options['switch'] ) {
-		echo '<span style="padding-bottom:5px;display:inline-block;"><input type="checkbox" name="classicpress_skip_remote_save" value="1"/> ';
+		echo '<span style="padding-bottom:5px;display:inline-block;"><input type="checkbox" class="classicpack-ui-toggle" name="classicpress_skip_remote_save" value="1"/> ';
 		esc_html_e( 'Skip remote image download for this post.', 'classicpack' );
 		echo '</span>';
 	}

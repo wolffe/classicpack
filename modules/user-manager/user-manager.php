@@ -310,12 +310,12 @@ function classicpack_user_manager_render_screen() {
 		settings_fields( 'classicpack_user_manager' );
 		echo '<fieldset class="classicpack-user-manager-settings__fieldset">';
 		echo '<p><label for="classicpack-registration-column-enabled">';
-		echo '<input type="checkbox" id="classicpack-registration-column-enabled" name="' . esc_attr( $opt_name ) . '[registration_column_enabled]" value="1" ' . checked( ! empty( $opts['registration_column_enabled'] ), true, false ) . ' /> ';
+		echo '<input type="checkbox" id="classicpack-registration-column-enabled" class="classicpack-ui-toggle" name="' . esc_attr( $opt_name ) . '[registration_column_enabled]" value="1" ' . checked( ! empty( $opts['registration_column_enabled'] ), true, false ) . ' /> ';
 		echo esc_html__( 'Show registration date on the Users screen', 'classicpack' );
 		echo '</label></p>';
 		echo '<p class="description">' . esc_html__( 'Turn off if your theme or another plugin already lists registration date, to avoid duplicate columns.', 'classicpack' ) . '</p>';
 		echo '<p><label for="classicpack-last-login-enabled">';
-		echo '<input type="checkbox" id="classicpack-last-login-enabled" name="' . esc_attr( $opt_name ) . '[last_login_enabled]" value="1" ' . checked( ! empty( $opts['last_login_enabled'] ), true, false ) . ' /> ';
+		echo '<input type="checkbox" id="classicpack-last-login-enabled" class="classicpack-ui-toggle" name="' . esc_attr( $opt_name ) . '[last_login_enabled]" value="1" ' . checked( ! empty( $opts['last_login_enabled'] ), true, false ) . ' /> ';
 		echo esc_html__( 'Track last login and show it on the Users screen', 'classicpack' );
 		echo '</label></p>';
 		echo '<p class="description">' . esc_html__( 'Turn off if your theme or another plugin already shows last login, to avoid duplicate columns.', 'classicpack' ) . '</p>';
