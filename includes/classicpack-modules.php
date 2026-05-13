@@ -88,9 +88,9 @@ function classicpack_get_module_registry() {
 }
 
 /**
- * Per-module admin link: Settings (options-style screens) vs Details (other screens or in-page anchor).
+ * Per-module admin link: Settings (options-style screens) vs Details (other screens).
  *
- * @return array<string, array{mode: string, page?: string, anchored?: bool, cap: string}>
+ * @return array<string, array{mode: string, page?: string, cap: string}>
  */
 function classicpack_get_module_admin_action_config() {
 	return array(
@@ -118,16 +118,6 @@ function classicpack_get_module_admin_action_config() {
 			'mode' => 'settings',
 			'page' => 'classicpack-user-manager',
 			'cap'  => 'list_users',
-		),
-		'delete-post-with-attachments' => array(
-			'mode'     => 'details',
-			'anchored' => true,
-			'cap'      => 'manage_options',
-		),
-		'user-avatar'                  => array(
-			'mode'     => 'details',
-			'anchored' => true,
-			'cap'      => 'manage_options',
 		),
 	);
 }
@@ -294,9 +284,6 @@ function classicpack_render_modules_page() {
 	?>
 	<div class="wrap classicpack-modules-wrap">
 		<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-		<p class="description">
-			<?php esc_html_e( 'Enable the features you need. All modules are off until you turn them on here.', 'classicpack' ); ?>
-		</p>
 
 		<form action="options.php" method="post" id="<?php echo esc_attr( $screen_id ); ?>">
 			<?php settings_fields( 'classicpack_settings' ); ?>
