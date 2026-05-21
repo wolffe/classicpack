@@ -4,8 +4,8 @@ Tags: classicpress, modules, toolkit, admin, utilities
 Requires at least: 6.2
 Requires PHP: 8.0
 Requires CP: 2.5
-Tested up to: 6.9.1
-Stable tag: 0.3.2
+Tested up to: 2.7
+Stable tag: 0.3.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -28,6 +28,7 @@ ClassicPack groups optional features into **modules**. Each module can be switch
 * **Duplicate post** — Row action to duplicate a public post type as a draft, including meta and terms.
 
 * **User Avatar** — Pick a profile picture from the Media Library on your profile; shown instead of Gravatar where avatars appear.
+* **Admin Login** — Custom login URL; redirect visitors who hit wp-login.php or /wp-admin/ without signing in (Settings → Permalinks).
 
 Requirements: ClassicPress 2.5+ (or WordPress 6.2+), PHP 8.0+.
 
@@ -48,6 +49,13 @@ Some modules target the Classic editor or list tables only. Enable modules indiv
 Enabled modules are stored in the `classicpack_modules` option. Individual modules may add their own options where documented.
 
 == Changelog ==
+
+= 0.3.4 =
+* Add Admin Login module (custom login URL and redirects; configure under Settings → Permalinks)
+
+= 0.3.3 =
+* Load the `classicpack` textdomain on `init` (no translation files required); avoid WP 6.7+ `_load_textdomain_just_in_time()` notices from early gettext
+* Bootstrap enabled modules on `init` instead of `plugins_loaded` so module registry strings run after translations are allowed
 
 = 0.3.2 =
 * Remove the non-functional Details action for Delete Post with Attachments and User Avatar on the modules screen
