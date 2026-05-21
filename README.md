@@ -74,6 +74,10 @@ Some modules are Classic-editor specific or list-table specific. If you use only
 
 Release notes match [readme.txt](readme.txt) (plugin directory listing).
 
+### 0.3.5
+
+- Admin Login: use `classicpack_admin_login_*` options and resolve CPCS violations
+
 ### 0.3.4
 
 - Add Admin Login module (custom login URL and redirects; configure under Settings → Permalinks)
