@@ -19,6 +19,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 $GLOBALS['classicpack_admin_login_wp_login_php'] = false;
 
 /**
+ * Raw request URI for login routing (not for output or SQL).
+ *
+ * @return string
+ */
+function classicpack_admin_login_get_request_uri() {
+	if ( empty( $_SERVER['REQUEST_URI'] ) || ! is_string( $_SERVER['REQUEST_URI'] ) ) {
+		return '';
+	}
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Routing-only; encoding must stay intact for path matching.
+	return wp_unslash( $_SERVER['REQUEST_URI'] );
+}
+
+/**
  * Plugin basename for ClassicPack (network activation checks).
  *
  * @return string
@@ -63,6 +76,7 @@ function classicpack_admin_login_user_trailingslashit( $text ) {
 function classicpack_admin_login_wp_template_loader() {
 	global $pagenow;
 
+	// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Required to route custom login URL (rename-wp-login pattern).
 	$pagenow = 'index.php';
 
 	if ( ! defined( 'WP_USE_THEMES' ) ) {
@@ -71,7 +85,7 @@ function classicpack_admin_login_wp_template_loader() {
 
 	wp();
 
-	if ( isset( $_SERVER['REQUEST_URI'] ) && $_SERVER['REQUEST_URI'] === classicpack_admin_login_user_trailingslashit( str_repeat( '-/', 10 ) ) ) {
+	if ( classicpack_admin_login_get_request_uri() === classicpack_admin_login_user_trailingslashit( str_repeat( '-/', 10 ) ) ) {
 		$_SERVER['REQUEST_URI'] = classicpack_admin_login_user_trailingslashit( '/wp-login-php/' );
 	}
 
@@ -141,10 +155,11 @@ function classicpack_admin_login_wpmu_options() {
  * @return void
  */
 function classicpack_admin_login_update_wpmu_options() {
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Network Settings form; update_wpmu_options is only reachable by super admins.
 	if ( empty( $_POST['classicpack_admin_login_page'] ) ) {
 		return;
 	}
-	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Network settings form.
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Network Settings form; update_wpmu_options is only reachable by super admins.
 	$login_page = sanitize_title_with_dashes( wp_unslash( $_POST['classicpack_admin_login_page'] ) );
 	if (
 		$login_page &&
@@ -265,6 +280,7 @@ function classicpack_admin_login_page_input() {
 function classicpack_admin_login_admin_notices() {
 	global $pagenow;
 
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only flag after Settings → Permalinks save.
 	if ( ! is_network_admin() && 'options-permalink.php' === $pagenow && isset( $_GET['settings-updated'] ) ) {
 		$url = classicpack_admin_login_new_login_url();
 		printf(
@@ -281,40 +297,48 @@ function classicpack_admin_login_admin_notices() {
 function classicpack_admin_login_plugins_loaded() {
 	global $pagenow;
 
+	$request_uri = rawurldecode( classicpack_admin_login_get_request_uri() );
+
 	if ( ! is_multisite()
-		&& ( strpos( rawurldecode( $_SERVER['REQUEST_URI'] ), 'wp-signup' ) !== false
-			|| strpos( rawurldecode( $_SERVER['REQUEST_URI'] ), 'wp-activate' ) !== false ) ) {
+		&& ( strpos( $request_uri, 'wp-signup' ) !== false
+			|| strpos( $request_uri, 'wp-activate' ) !== false ) ) {
 
 		wp_die( esc_html__( 'This feature is not enabled.', 'classicpack' ) );
 	}
 
-	$request = parse_url( rawurldecode( $_SERVER['REQUEST_URI'] ) );
+	$request = wp_parse_url( $request_uri );
 
-	if ( ( strpos( rawurldecode( $_SERVER['REQUEST_URI'] ), 'wp-login.php' ) !== false
-		|| ( isset( $request['path'] ) && untrailingslashit( $request['path'] ) === site_url( 'wp-login', 'relative' ) ) )
+	if ( ( strpos( $request_uri, 'wp-login.php' ) !== false
+		|| ( is_array( $request ) && isset( $request['path'] ) && untrailingslashit( $request['path'] ) === site_url( 'wp-login', 'relative' ) ) )
 		&& ! is_admin() ) {
 
 		$GLOBALS['classicpack_admin_login_wp_login_php'] = true;
 
 		$_SERVER['REQUEST_URI'] = classicpack_admin_login_user_trailingslashit( '/' . str_repeat( '-/', 10 ) );
 
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Required to route custom login URL (rename-wp-login pattern).
 		$pagenow = 'index.php';
 
-	} elseif ( ( isset( $request['path'] ) && untrailingslashit( $request['path'] ) === home_url( classicpack_admin_login_new_login_slug(), 'relative' ) )
+	} elseif ( ( is_array( $request ) && isset( $request['path'] ) && untrailingslashit( $request['path'] ) === home_url( classicpack_admin_login_new_login_slug(), 'relative' ) )
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Login slug query var; read-only routing.
 		|| ( ! get_option( 'permalink_structure' )
 			&& isset( $_GET[ classicpack_admin_login_new_login_slug() ] )
-			&& empty( $_GET[ classicpack_admin_login_new_login_slug() ] ) ) ) {
+			&& empty( $_GET[ classicpack_admin_login_new_login_slug() ] ) )
+		// phpcs:enable
+	) {
 
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Required to route custom login URL (rename-wp-login pattern).
 		$pagenow = 'wp-login.php';
 
-	} elseif ( ( strpos( rawurldecode( $_SERVER['REQUEST_URI'] ), 'wp-register.php' ) !== false
-			|| ( isset( $request['path'] ) && untrailingslashit( $request['path'] ) === site_url( 'wp-register', 'relative' ) ) )
+	} elseif ( ( strpos( $request_uri, 'wp-register.php' ) !== false
+			|| ( is_array( $request ) && isset( $request['path'] ) && untrailingslashit( $request['path'] ) === site_url( 'wp-register', 'relative' ) ) )
 		&& ! is_admin() ) {
 
 		$GLOBALS['classicpack_admin_login_wp_login_php'] = true;
 
 		$_SERVER['REQUEST_URI'] = classicpack_admin_login_user_trailingslashit( '/' . str_repeat( '-/', 10 ) );
 
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Required to route custom login URL (rename-wp-login pattern).
 		$pagenow = 'index.php';
 	}
 }
@@ -334,21 +358,28 @@ function classicpack_admin_login_wp_loaded() {
 		die();
 	}
 
-	$request = parse_url( rawurldecode( $_SERVER['REQUEST_URI'] ) );
+	$request      = wp_parse_url( rawurldecode( classicpack_admin_login_get_request_uri() ) );
+	$query_suffix = '';
+	if ( isset( $_SERVER['QUERY_STRING'] ) && '' !== $_SERVER['QUERY_STRING'] ) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Query string passed through for login redirect only.
+		$query_suffix = '?' . wp_unslash( $_SERVER['QUERY_STRING'] );
+	}
 
 	if (
 		'wp-login.php' === $pagenow &&
+		is_array( $request ) &&
 		isset( $request['path'] ) &&
 		$request['path'] !== classicpack_admin_login_user_trailingslashit( $request['path'] ) &&
 		get_option( 'permalink_structure' )
 	) {
-		wp_safe_redirect( classicpack_admin_login_user_trailingslashit( classicpack_admin_login_new_login_url() ) . ( ! empty( $_SERVER['QUERY_STRING'] ) ? '?' . wp_unslash( $_SERVER['QUERY_STRING'] ) : '' ) );
+		wp_safe_redirect( classicpack_admin_login_user_trailingslashit( classicpack_admin_login_new_login_url() ) . $query_suffix );
 		die;
 	} elseif ( ! empty( $GLOBALS['classicpack_admin_login_wp_login_php'] ) ) {
 		if (
 			( $referer = wp_get_referer() ) &&
 			strpos( $referer, 'wp-activate.php' ) !== false &&
-			( $referer = parse_url( $referer ) ) &&
+			( $referer = wp_parse_url( $referer ) ) &&
+			is_array( $referer ) &&
 			! empty( $referer['query'] )
 		) {
 			parse_str( $referer['query'], $referer );
@@ -361,7 +392,7 @@ function classicpack_admin_login_wp_loaded() {
 					$result->get_error_code() === 'blog_taken'
 				)
 			) {
-				wp_safe_redirect( classicpack_admin_login_new_login_url() . ( ! empty( $_SERVER['QUERY_STRING'] ) ? '?' . wp_unslash( $_SERVER['QUERY_STRING'] ) : '' ) );
+				wp_safe_redirect( classicpack_admin_login_new_login_url() . $query_suffix );
 				die;
 			}
 		}
