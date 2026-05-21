@@ -84,6 +84,11 @@ function classicpack_get_module_registry() {
 			'description' => __( 'Let users pick a profile picture from the Media Library on their profile; uses it instead of Gravatar where avatars are shown.', 'classicpack' ),
 			'file'        => $base . 'user-avatar/user-avatar.php',
 		),
+		'admin-login'            => array(
+			'label'       => __( 'Admin Login', 'classicpack' ),
+			'description' => __( 'Change the login URL and redirect visitors who hit wp-login.php or /wp-admin/ without signing in. Configure under Settings → Permalinks.', 'classicpack' ),
+			'file'        => $base . 'admin-login/admin-login.php',
+		),
 	);
 }
 
@@ -118,6 +123,11 @@ function classicpack_get_module_admin_action_config() {
 			'mode' => 'settings',
 			'page' => 'classicpack-user-manager',
 			'cap'  => 'list_users',
+		),
+		'admin-login'                  => array(
+			'mode'       => 'settings',
+			'admin_path' => 'options-permalink.php',
+			'cap'        => 'manage_options',
 		),
 	);
 }
@@ -169,6 +179,21 @@ function classicpack_plugin_action_links( $links ) {
 }
 
 /**
+ * Load translations once core allows plugin textdomains (WP 6.7+ warns if gettext runs too early).
+ *
+ * Safe when no `.mo` files exist: falls back to source strings (English).
+ *
+ * @return void
+ */
+function classicpack_load_textdomain() {
+	load_plugin_textdomain(
+		'classicpack',
+		false,
+		dirname( plugin_basename( CLASSICPACK_FILE ) ) . '/languages'
+	);
+}
+
+/**
  * Bootstrap hooks.
  *
  * @return void
@@ -178,7 +203,8 @@ function classicpack_modules_init() {
 	add_action( 'admin_menu', 'classicpack_register_admin_menu', 5 );
 	add_action( 'admin_init', 'classicpack_register_settings' );
 	add_action( 'admin_enqueue_scripts', 'classicpack_enqueue_modules_screen_assets' );
-	add_action( 'plugins_loaded', 'classicpack_load_enabled_modules', 20 );
+	add_action( 'init', 'classicpack_load_textdomain', 1 );
+	add_action( 'init', 'classicpack_load_enabled_modules', 11 );
 }
 
 /**
@@ -277,6 +303,11 @@ function classicpack_render_modules_page() {
 			'title' => __( 'Users', 'classicpack' ),
 			'slugs' => array( 'email-commenters', 'users-online', 'user-manager', 'user-content', 'user-avatar' ),
 		),
+		array(
+			'id'    => 'security',
+			'title' => __( 'Security', 'classicpack' ),
+			'slugs' => array( 'admin-login' ),
+		),
 	);
 	$enabled   = array_fill_keys( classicpack_get_enabled_modules(), true );
 	$opt       = classicpack_get_modules_option_name();
@@ -311,6 +342,8 @@ function classicpack_render_modules_page() {
 								$c = $action_cfg;
 								if ( ! empty( $c['anchored'] ) ) {
 									$action_url = admin_url( 'admin.php?page=classicpack' ) . '#classicpack-module-anchor-' . sanitize_key( $slug );
+								} elseif ( ! empty( $c['admin_path'] ) ) {
+									$action_url = admin_url( $c['admin_path'] ) . '#classicpack-admin-login-page-input';
 								} elseif ( ! empty( $c['page'] ) ) {
 									$action_url = admin_url( 'admin.php?page=' . sanitize_key( $c['page'] ) );
 								}

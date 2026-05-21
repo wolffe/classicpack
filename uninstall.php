@@ -23,6 +23,10 @@ function classicpack_uninstall_single_site() {
 	$options = array(
 		'classicpack_modules',
 		'classicpack_user_manager_options',
+		'classicpack_admin_login_bootstrapped',
+		'classicpack_admin_login_page',
+		'classicpack_admin_login_redirect',
+		'classicpack_admin_login_redirect_field',
 		'useronline_most',
 		'classicpress_auto_save_images_options',
 		'easy_author_avatar_image_option',
@@ -31,6 +35,8 @@ function classicpack_uninstall_single_site() {
 	foreach ( $options as $option_name ) {
 		delete_option( $option_name );
 	}
+
+	delete_site_option( 'classicpack_admin_login_page' );
 
 	delete_metadata( 'user', 0, 'classicpack_last_login', '', true );
 	delete_metadata( 'post', 0, 'has_user_restriction', '', true );

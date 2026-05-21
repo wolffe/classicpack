@@ -59,6 +59,7 @@ Enable these on the **ClassicPack** screen. Nothing here runs when the module is
 | **Post type switcher** | In the **classic** editor, switch an existing item to another public post type (with a warning). | **Posts** or **Pages** (or CPT) → edit, Publish box |
 | **Duplicate post** | Row action to duplicate a public post type as a draft (content, meta, terms, featured image as applicable). | Post type list tables |
 | **User Avatar** | Profile picture from the Media Library on the user profile screen; replaces Gravatar when set (legacy meta key unchanged). | **Users → Profile** / **Users → Edit user** |
+| **Admin Login** | Custom login URL; redirects for wp-login.php and /wp-admin/ when not signed in. | **Settings → Permalinks** (Admin Login section) |
 
 Some modules are Classic-editor specific or list-table specific. If you use only the block editor, test before relying on a module.
 
@@ -72,6 +73,15 @@ Some modules are Classic-editor specific or list-table specific. If you use only
 ## Changelog
 
 Release notes match [readme.txt](readme.txt) (plugin directory listing).
+
+### 0.3.4
+
+- Add Admin Login module (custom login URL and redirects; configure under Settings → Permalinks)
+
+### 0.3.3
+
+- Load the `classicpack` textdomain on `init` (no translation files required); avoid WP 6.7+ `_load_textdomain_just_in_time()` notices from early gettext
+- Bootstrap enabled modules on `init` instead of `plugins_loaded` so module registry strings run after translations are allowed
 
 ### 0.3.2
 
