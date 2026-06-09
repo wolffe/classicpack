@@ -74,6 +74,10 @@ Some modules are Classic-editor specific or list-table specific. If you use only
 
 Release notes match [readme.txt](readme.txt) (plugin directory listing).
 
+### 0.3.6
+
+- Admin Login: fix PHP 8 undefined-variable warnings on the custom login screen (`$user_login`, `$error`) when loading `wp-login.php`
+
 ### 0.3.5
 
 - Admin Login: use `classicpack_admin_login_*` options and resolve CPCS violations
