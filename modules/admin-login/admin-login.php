@@ -399,7 +399,11 @@ function classicpack_admin_login_wp_loaded() {
 
 		classicpack_admin_login_wp_template_loader();
 	} elseif ( 'wp-login.php' === $pagenow ) {
+		$user_login = '';
+		$error      = '';
+
 		require_once ABSPATH . 'wp-login.php';
+
 		die;
 	}
 }
