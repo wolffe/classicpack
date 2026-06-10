@@ -5,7 +5,7 @@ Requires at least: 6.2
 Requires PHP: 8.0
 Requires CP: 2.5
 Tested up to: 2.7
-Stable tag: 0.3.6
+Stable tag: 0.3.7
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -49,6 +49,11 @@ Some modules target the Classic editor or list tables only. Enable modules indiv
 Enabled modules are stored in the `classicpack_modules` option. Individual modules may add their own options where documented.
 
 == Changelog ==
+
+= 0.3.7 =
+* Add per-page and total redirect counts, pagination, and plain-language help for Delete and Delete All to Core Redirects Manager
+* Rename modules screen submit button from "Save modules" to "Save Changes"
+* Use curly-brace control flow in PHP templates, short array syntax (`[]`), and single-line HTML opening tags (no behavior change)
 
 = 0.3.6 =
 * Admin Login: fix PHP 8 undefined-variable warnings on the custom login screen (`$user_login`, `$error`) when loading `wp-login.php`

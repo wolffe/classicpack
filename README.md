@@ -23,7 +23,7 @@ Use ClassicPack if you want several small admin utilities in one place instead o
 
 1. Install the `classicpack` folder under `wp-content/plugins/` (or install the release zip from your Plugins screen) and **activate** ClassicPack.
 2. In the admin sidebar, open **ClassicPack** (top-level menu). You will see checkboxes for each module, grouped (for example: Performance and SEO, Media, Content, Users).
-3. Enable the modules you need and click **Save modules**. Only enabled modules are loaded on the next request.
+3. Enable the modules you need and click **Save Changes**. Only enabled modules are loaded on the next request.
 4. Some modules add their own subpage under **ClassicPack** (for example *User Manager*) or a link from the modules list. Others appear only in context (for example a row action on a post list, or a block on a user profile).
 
 If something does not show up, confirm the module is enabled and that you meet the module’s context (for example the post type switcher is for the **classic** post editor, not the block editor).
@@ -73,6 +73,12 @@ Some modules are Classic-editor specific or list-table specific. If you use only
 ## Changelog
 
 Release notes match [readme.txt](readme.txt) (plugin directory listing).
+
+### 0.3.7
+
+- Core Redirects Manager: add per-page and total redirect counts, pagination, and plain-language help for Delete and Delete All
+- Rename modules screen submit button from "Save modules" to "Save Changes"
+- Code style: use curly-brace control flow in PHP templates, short array syntax (`[]`), and single-line HTML opening tags (no behavior change)
 
 ### 0.3.6
 
