@@ -56,7 +56,7 @@ function classicpress_redirects_handle_actions() {
 
 	if ( 'delete' === $_GET['classicpress_redirects_action'] && $post_id && $slug ) {
 		$slugs = get_post_meta( $post_id, '_wp_old_slug' );
-		$keep  = array();
+		$keep  = [];
 		foreach ( $slugs as $s ) {
 			if ( $s !== $slug ) {
 				$keep[] = $s;
@@ -131,12 +131,12 @@ function classicpress_redirects_render_page() {
 
 		$delete_url = wp_nonce_url(
 			add_query_arg(
-				array(
+				[
 					'page'                          => 'classicpress-redirects',
 					'classicpress_redirects_action' => 'delete',
 					'post_id'                       => $post->ID,
 					'slug'                          => $row->slug,
-				),
+				],
 				$redirects_admin_base
 			),
 			'classicpress_redirects_action'
@@ -144,11 +144,11 @@ function classicpress_redirects_render_page() {
 
 		$delete_all_url = wp_nonce_url(
 			add_query_arg(
-				array(
+				[
 					'page'                          => 'classicpress-redirects',
 					'classicpress_redirects_action' => 'delete_all',
 					'post_id'                       => $post->ID,
-				),
+				],
 				$redirects_admin_base
 			),
 			'classicpress_redirects_action'
