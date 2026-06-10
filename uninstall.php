@@ -20,7 +20,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 function classicpack_uninstall_single_site() {
 	global $wpdb;
 
-	$options = array(
+	$options = [
 		'classicpack_modules',
 		'classicpack_user_manager_options',
 		'classicpack_admin_login_bootstrapped',
@@ -30,7 +30,7 @@ function classicpack_uninstall_single_site() {
 		'useronline_most',
 		'classicpress_auto_save_images_options',
 		'easy_author_avatar_image_option',
-	);
+	];
 
 	foreach ( $options as $option_name ) {
 		delete_option( $option_name );
@@ -41,9 +41,9 @@ function classicpack_uninstall_single_site() {
 	delete_metadata( 'user', 0, 'classicpack_last_login', '', true );
 	delete_metadata( 'post', 0, 'has_user_restriction', '', true );
 
-	$tables = array(
+	$tables = [
 		$wpdb->prefix . 'useronline',
-	);
+	];
 
 	foreach ( $tables as $table_name ) {
 		$safe_table = esc_sql( $table_name );

@@ -43,15 +43,7 @@ function classicpack_post_type_switcher_print_hidden_form( $post_id ) {
     $form_id = classicpack_post_type_switcher_get_form_id();
     $action  = admin_url( 'admin-post.php' );
     ?>
-    <form
-        id="<?php echo esc_attr( $form_id ); ?>"
-        class="classicpack-pts-form"
-        method="post"
-        action="<?php echo esc_url( $action ); ?>"
-        style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;"
-        tabindex="-1"
-        aria-hidden="true"
-    >
+    <form id="<?php echo esc_attr( $form_id ); ?>" class="classicpack-pts-form" method="post" action="<?php echo esc_url( $action ); ?>" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;" tabindex="-1" aria-hidden="true">
         <input type="hidden" name="action" value="classicpack_switch_post_type" />
         <input type="hidden" name="post_id" value="<?php echo esc_attr( (string) $post_id ); ?>" />
         <?php wp_nonce_field( 'classicpack_switch_post_' . $post_id, '_wpnonce', false, true ); ?>
@@ -125,18 +117,13 @@ function classicpack_post_type_switcher_render() {
             <label for="classicpack-new-post-type" class="screen-reader-text">
                 <?php esc_html_e( 'New post type', 'classicpack' ); ?>
             </label>
-            <select
-                name="new_post_type"
-                id="classicpack-new-post-type"
-                form="<?php echo esc_attr( $form_id ); ?>"
-                required
-            >
+            <select name="new_post_type" id="classicpack-new-post-type" form="<?php echo esc_attr( $form_id ); ?>" required>
                 <option value="" disabled><?php esc_html_e( 'Action to take…', 'classicpack' ); ?></option>
-                <?php foreach ( $targets as $name => $pto ) : ?>
+                <?php foreach ( $targets as $name => $pto ) { ?>
                     <option value="<?php echo esc_attr( $name ); ?>"<?php selected( $post->post_type, $name ); ?>>
                         <?php echo esc_html( $pto->labels->singular_name ); ?>
                     </option>
-                <?php endforeach; ?>
+                <?php } ?>
             </select>
             <?php
             submit_button(

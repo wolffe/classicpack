@@ -57,7 +57,7 @@ function classicpress_email_commenters_render_admin_page() {
 			)
 		);
 		if ( ! empty( $emails ) ) {
-			$headers = array( 'Content-Type: text/html; charset=UTF-8' );
+			$headers = [ 'Content-Type: text/html; charset=UTF-8' ];
 			foreach ( $emails as $email ) {
 				wp_mail( $email, $subject, $message, $headers );
 			}
@@ -71,7 +71,7 @@ function classicpress_email_commenters_render_admin_page() {
 		$message = isset( $_POST['classicpress_email_commenters_message'] ) ? wp_kses_post( wp_unslash( $_POST['classicpress_email_commenters_message'] ) ) : '';
 
 		$admin_email = get_option( 'admin_email' );
-		wp_mail( $admin_email, $subject . ' [PREVIEW]', $message, array( 'Content-Type: text/html; charset=UTF-8' ) );
+		wp_mail( $admin_email, $subject . ' [PREVIEW]', $message, [ 'Content-Type: text/html; charset=UTF-8' ] );
 
 		echo '<div class="updated"><p>' . esc_html(
 			sprintf(
@@ -92,13 +92,13 @@ function classicpress_email_commenters_render_admin_page() {
 				<?php
 				global $wpdb;
 				$posts = get_posts(
-					array(
+					[
 						'numberposts' => -1,
 						'post_status' => 'publish',
-						'post_type'   => array( 'post', 'page' ),
+						'post_type'   => [ 'post', 'page' ],
 						'orderby'     => 'title',
 						'order'       => 'ASC',
-					)
+					]
 				);
 				echo '<select name="classicpress_email_commenters_post_id">';
 				foreach ( $posts as $post ) {

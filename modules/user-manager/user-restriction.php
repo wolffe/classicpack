@@ -69,7 +69,7 @@ function classicpack_user_restriction_filter_pages( $posts ) {
 		return $posts;
 	}
 
-	$filtered = array();
+	$filtered = [];
 	foreach ( $posts as $post ) {
 		if ( ! (int) get_post_meta( $post->ID, CLASSICPACK_USER_RESTRICTION_META_KEY, true ) ) {
 			$filtered[] = $post;
@@ -94,7 +94,7 @@ function classicpack_user_restriction_filter_posts( $posts, $query = null ) {
 		return $posts;
 	}
 
-	$filtered = array();
+	$filtered = [];
 	foreach ( $posts as $post ) {
 		if ( ! (int) get_post_meta( $post->ID, CLASSICPACK_USER_RESTRICTION_META_KEY, true ) ) {
 			$filtered[] = $post;
@@ -111,7 +111,7 @@ function classicpack_user_restriction_add_meta_box() {
 		'classicpack-user-restriction',
 		__( 'User restriction', 'classicpack' ),
 		'classicpack_user_restriction_render_meta_box',
-		array( 'post', 'page' ),
+		[ 'post', 'page' ],
 		'side',
 		'low'
 	);
@@ -150,7 +150,7 @@ function classicpack_user_restriction_save_meta( $post_id, $post ) {
 		return;
 	}
 
-	if ( ! $post instanceof WP_Post || ! in_array( $post->post_type, array( 'post', 'page' ), true ) ) {
+	if ( ! $post instanceof WP_Post || ! in_array( $post->post_type, [ 'post', 'page' ], true ) ) {
 		return;
 	}
 

@@ -25,13 +25,13 @@ function classicpack_user_manager_get_options_name() {
  * @return array{last_login_enabled: int, registration_column_enabled: int}
  */
 function classicpack_user_manager_get_options() {
-	$defaults = array(
+	$defaults = [
 		'last_login_enabled'           => 1,
 		'registration_column_enabled'  => 1,
-	);
-	$stored = get_option( classicpack_user_manager_get_options_name(), array() );
+	];
+	$stored = get_option( classicpack_user_manager_get_options_name(), [] );
 	if ( ! is_array( $stored ) ) {
-		$stored = array();
+		$stored = [];
 	}
 	return array_merge( $defaults, $stored );
 }
@@ -42,12 +42,12 @@ function classicpack_user_manager_get_options() {
  */
 function classicpack_user_manager_sanitize_options( $value ) {
 	if ( ! is_array( $value ) ) {
-		$value = array();
+		$value = [];
 	}
-	return array(
+	return [
 		'last_login_enabled'          => ! empty( $value['last_login_enabled'] ) ? 1 : 0,
 		'registration_column_enabled' => ! empty( $value['registration_column_enabled'] ) ? 1 : 0,
-	);
+	];
 }
 
 /**
@@ -79,11 +79,11 @@ function classicpack_user_manager_register_settings() {
 	register_setting(
 		'classicpack_user_manager',
 		classicpack_user_manager_get_options_name(),
-		array(
+		[
 			'type'              => 'array',
 			'sanitize_callback' => 'classicpack_user_manager_sanitize_options',
-			'default'           => array(),
-		)
+			'default'           => [],
+		]
 	);
 }
 
@@ -251,8 +251,8 @@ function classicpack_user_manager_render_screen() {
 	}
 
 	$restricted_q = new WP_Query(
-		array(
-			'post_type'              => array( 'post', 'page' ),
+		[
+			'post_type'              => [ 'post', 'page' ],
 			'post_status'            => 'any',
 			'posts_per_page'         => -1,
 			'orderby'                => 'title',
@@ -261,25 +261,25 @@ function classicpack_user_manager_render_screen() {
 			'update_post_meta_cache' => false,
 			'update_post_term_cache' => false,
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Admin-only screen; small result set.
-			'meta_query'             => array(
-				array(
+			'meta_query'             => [
+				[
 					'key'     => CLASSICPACK_USER_RESTRICTION_META_KEY,
 					'value'   => 1,
 					'compare' => '=',
 					'type'    => 'NUMERIC',
-				),
-			),
-		)
+				],
+			],
+		]
 	);
 	$restricted = $restricted_q->posts;
 
 	$show_last = classicpack_user_manager_is_last_login_enabled();
 	if ( $show_last ) {
 		$users = get_users(
-			array(
+			[
 				'number' => -1,
 				'fields' => 'all',
-			)
+			]
 		);
 		usort(
 			$users,
@@ -291,12 +291,12 @@ function classicpack_user_manager_render_screen() {
 		);
 	} else {
 		$users = get_users(
-			array(
+			[
 				'number'  => -1,
 				'fields'  => 'all',
 				'orderby' => 'registered',
 				'order'   => 'DESC',
-			)
+			]
 		);
 	}
 	$opt_name   = classicpack_user_manager_get_options_name();

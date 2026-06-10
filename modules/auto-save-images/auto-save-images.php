@@ -35,12 +35,12 @@ function classicpress_auto_save_images_register_post_meta() {
 	register_post_meta(
 		'',
 		'_classicpress_skip_remote_images',
-		array(
+		[
 			'show_in_rest'  => true,
 			'single'        => true,
 			'type'          => 'string',
 			'auth_callback' => 'classicpress_auto_save_images_meta_auth',
-		)
+		]
 	);
 }
 
@@ -76,7 +76,7 @@ function classicpress_auto_save_images_enqueue_block_editor() {
 	wp_enqueue_script(
 		'classicpress-auto-save-images-block-editor',
 		plugins_url( 'block-editor-toggle.js', __FILE__ ),
-		array( 'wp-plugins', 'wp-edit-post', 'wp-element', 'wp-components', 'wp-data' ),
+		[ 'wp-plugins', 'wp-edit-post', 'wp-element', 'wp-components', 'wp-data' ],
 		CLASSICPACK_VERSION,
 		true
 	);
@@ -144,31 +144,31 @@ function classicpress_auto_save_images_post_save( $data, $postarr ) {
 function classicpress_auto_save_images_save_remote( $image_url, $post_id, $i ) {
 	$options = get_option( 'classicpress_auto_save_images_options' );
 	if ( ! is_array( $options ) ) {
-		$options = array();
+		$options = [];
 	}
 
 	if ( ! wp_http_validate_url( $image_url ) ) {
-		return array( 'url' => $image_url );
+		return [ 'url' => $image_url ];
 	}
 
-	$response = wp_remote_get( $image_url, array( 'timeout' => 30 ) );
+	$response = wp_remote_get( $image_url, [ 'timeout' => 30 ] );
 	if ( is_wp_error( $response ) ) {
-		return array( 'url' => $image_url );
+		return [ 'url' => $image_url ];
 	}
 
 	$status_code = wp_remote_retrieve_response_code( $response );
 	if ( 200 !== (int) $status_code ) {
-		return array( 'url' => $image_url );
+		return [ 'url' => $image_url ];
 	}
 
 	$content_type = wp_remote_retrieve_header( $response, 'content-type' );
 	if ( strpos( $content_type, 'image/' ) === false ) {
-		return array( 'url' => $image_url );
+		return [ 'url' => $image_url ];
 	}
 
 	$file = wp_remote_retrieve_body( $response );
 	if ( empty( $file ) ) {
-		return array( 'url' => $image_url );
+		return [ 'url' => $image_url ];
 	}
 
 	$raw_name = urldecode( basename( (string) wp_parse_url( $image_url, PHP_URL_PATH ) ) );
@@ -181,19 +181,19 @@ function classicpress_auto_save_images_save_remote( $image_url, $post_id, $i ) {
 
 	$res = wp_upload_bits( $filename, null, $file );
 	if ( ! empty( $res['error'] ) ) {
-		return array( 'url' => $image_url );
+		return [ 'url' => $image_url ];
 	}
 
 	$file        = $res['file'];
 	$dirs        = wp_upload_dir();
 	$filetype    = wp_check_filetype( $file );
-	$attachment  = array(
+	$attachment  = [
 		'guid'           => $dirs['baseurl'] . '/' . _wp_relative_upload_path( $file ),
 		'post_mime_type' => $filetype['type'],
 		'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $file ) ),
 		'post_content'   => '',
 		'post_status'    => 'inherit',
-	);
+	];
 	$attach_id   = wp_insert_attachment( $attachment, $file, $post_id );
 	$attach_data = wp_generate_attachment_metadata( $attach_id, $file );
 	wp_update_attachment_metadata( $attach_id, $attach_data );
@@ -216,21 +216,21 @@ function classicpress_auto_save_images_options_form() {
 			wp_die( esc_html__( 'You do not have permission to change these settings.', 'classicpack' ) );
 		}
 
-		$data = array(
+		$data = [
 			'tmb'      => isset( $_POST['tmb'] ) ? sanitize_text_field( wp_unslash( $_POST['tmb'] ) ) : '',
 			'switch'   => isset( $_POST['switch'] ) ? sanitize_text_field( wp_unslash( $_POST['switch'] ) ) : '',
 			'post-tmb' => isset( $_POST['post-tmb'] ) ? sanitize_text_field( wp_unslash( $_POST['post-tmb'] ) ) : '',
-		);
+		];
 		update_option( 'classicpress_auto_save_images_options', $data );
 	}
 
 	$options = get_option( 'classicpress_auto_save_images_options' );
 	if ( ! is_array( $options ) ) {
-		$options = array(
+		$options = [
 			'tmb'      => '',
 			'switch'   => '',
 			'post-tmb' => '',
-		);
+		];
 	}
 	require __DIR__ . '/options-form.php';
 }
@@ -244,7 +244,7 @@ function classicpress_auto_save_images_options_form() {
 function classicpress_auto_save_images_remove_tmb( $sizes ) {
 	$options = get_option( 'classicpress_auto_save_images_options' );
 	if ( is_array( $options ) && ! empty( $options['tmb'] ) && 'yes' === $options['tmb'] ) {
-		$sizes = array();
+		$sizes = [];
 	}
 	return $sizes;
 }

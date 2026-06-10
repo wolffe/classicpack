@@ -90,11 +90,11 @@ function classicpack_user_content_show_user_profile( $user ) {
                 <td><?php echo esc_html( $label ); ?></td>
                 <td><?php echo esc_html( (string) $count ); ?></td>
                 <td>
-            <?php if ( $url ) : ?>
+            <?php if ( $url ) { ?>
                     <a href="<?php echo esc_url( $url ); ?>"><?php esc_html_e( 'View', 'classicpack' ); ?></a>
-            <?php else : ?>
+            <?php } else { ?>
                     &mdash;
-            <?php endif; ?>
+            <?php } ?>
                 </td>
             </tr>
             <?php
@@ -141,11 +141,11 @@ function classicpack_user_content_show_user_profile( $user ) {
                 </td>
                 <td><?php echo esc_html( (string) $wc_count ); ?></td>
                 <td>
-                <?php if ( $wc_url ) : ?>
+                <?php if ( $wc_url ) { ?>
                     <a href="<?php echo esc_url( $wc_url ); ?>"><?php esc_html_e( 'View', 'classicpack' ); ?></a>
-                <?php else : ?>
+                <?php } else { ?>
                     &mdash;
-                <?php endif; ?>
+                <?php } ?>
                 </td>
             </tr>
                 <?php
@@ -192,17 +192,17 @@ function classicpack_user_content_show_user_profile( $user ) {
             <tr>
                 <td>
                 <?php echo esc_html( $label ); ?>
-                <?php if ( $desc !== '' ) : ?>
+                <?php if ( $desc !== '' ) { ?>
                         <br /><span class="description"><?php echo esc_html( $desc ); ?></span>
-                    <?php endif; ?>
+                    <?php } ?>
                 </td>
                 <td><?php echo esc_html( (string) $c ); ?></td>
                 <td>
-                <?php if ( $ext_url !== '' ) : ?>
+                <?php if ( $ext_url !== '' ) { ?>
                         <a href="<?php echo esc_url( $ext_url ); ?>"><?php esc_html_e( 'View', 'classicpack' ); ?></a>
-                    <?php else : ?>
+                    <?php } else { ?>
                         &mdash;
-                    <?php endif; ?>
+                    <?php } ?>
                 </td>
             </tr>
                 <?php

@@ -63,10 +63,10 @@ function classicpress_useronline_init() {
 
 	$most = get_option(
 		'useronline_most',
-		array(
+		[
 			'count' => 1,
 			'date'  => time(),
-		)
+		]
 	);
 
 	classicpress_useronline_setup( $most );

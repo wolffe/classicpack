@@ -25,14 +25,14 @@ add_filter( 'get_avatar', 'classicpack_author_avatar_image_filter_avatar', 10, 5
  * @return void
  */
 function classicpack_author_avatar_image_admin_enqueue_scripts( $hook_suffix ) {
-	if ( ! in_array( $hook_suffix, array( 'profile.php', 'user-edit.php' ), true ) ) {
+	if ( ! in_array( $hook_suffix, [ 'profile.php', 'user-edit.php' ], true ) ) {
 		return;
 	}
 
 	wp_enqueue_style(
 		'classicpack-author-avatar-image',
 		plugins_url( 'css/user-avatar.css', __FILE__ ),
-		array(),
+		[],
 		CLASSICPACK_VERSION
 	);
 
@@ -41,7 +41,7 @@ function classicpack_author_avatar_image_admin_enqueue_scripts( $hook_suffix ) {
 	wp_enqueue_script(
 		'classicpack-author-avatar-image',
 		plugins_url( 'js/user-avatar.js', __FILE__ ),
-		array( 'jquery' ),
+		[ 'jquery' ],
 		CLASSICPACK_VERSION,
 		true
 	);
@@ -49,13 +49,13 @@ function classicpack_author_avatar_image_admin_enqueue_scripts( $hook_suffix ) {
 	wp_localize_script(
 		'classicpack-author-avatar-image',
 		'classicpackAuthorAvatarImage',
-		array(
+		[
 			'mediaTitle'       => __( 'Choose image — profile picture', 'classicpack' ),
 			'mediaButtonTitle' => __( 'Select', 'classicpack' ),
 			'deleteConfirm'    => __( 'Remove this profile picture?', 'classicpack' ),
 			'uploadButtonText' => __( 'Upload New Profile Picture', 'classicpack' ),
 			'changeButtonText' => __( 'Change Profile Picture', 'classicpack' ),
-		)
+		]
 	);
 }
 
@@ -185,22 +185,22 @@ function classicpack_author_avatar_image_avatar_dimensions( $size ) {
 	if ( is_array( $size ) ) {
 		$w = isset( $size['width'] ) ? (int) $size['width'] : ( isset( $size['size'] ) ? (int) $size['size'] : 96 );
 		$h = isset( $size['height'] ) ? (int) $size['height'] : $w;
-		return array(
+		return [
 			'w' => max( 1, $w ),
 			'h' => max( 1, $h ),
-		);
+		];
 	}
 	if ( is_numeric( $size ) ) {
 		$n = max( 1, (int) $size );
-		return array(
+		return [
 			'w' => $n,
 			'h' => $n,
-		);
+		];
 	}
-	return array(
+	return [
 		'w' => 96,
 		'h' => 96,
-	);
+	];
 }
 
 /**

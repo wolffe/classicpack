@@ -40,7 +40,7 @@ function classicpack_delete_post_attachments_on_before_delete( $post_id ) {
 		$attachment_id = (int) $attachment->ID;
 
 		$thumb_query = new WP_Query(
-			array(
+			[
 				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Narrow query; runs on intentional post delete only.
 				'meta_key'       => '_thumbnail_id',
 				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
@@ -50,10 +50,10 @@ function classicpack_delete_post_attachments_on_before_delete( $post_id ) {
 				'post_status'    => 'any',
 				'posts_per_page' => -1,
 				'no_found_rows'  => true,
-			)
+			]
 		);
 
-		$attachment_urls = array( wp_get_attachment_url( $attachment_id ) );
+		$attachment_urls = [ wp_get_attachment_url( $attachment_id ) ];
 		$meta            = wp_get_attachment_metadata( $attachment_id );
 
 		if ( isset( $meta['sizes'] ) && is_array( $meta['sizes'] ) ) {
@@ -65,37 +65,37 @@ function classicpack_delete_post_attachments_on_before_delete( $post_id ) {
 			}
 		}
 
-		$content_ids = array();
+		$content_ids = [];
 		foreach ( array_filter( $attachment_urls ) as $url ) {
 			$q = new WP_Query(
-				array(
+				[
 					's'              => esc_url_raw( $url ),
 					'post_type'      => 'any',
 					'fields'         => 'ids',
 					'post_status'    => 'any',
 					'posts_per_page' => -1,
 					'no_found_rows'  => true,
-				)
+				]
 			);
 			$content_ids = array_merge( $content_ids, $q->posts );
 		}
 
-		$usage = array(
+		$usage = [
 			'thumbnail' => array_unique( array_map( 'intval', $thumb_query->posts ) ),
 			'content'   => array_unique( array_map( 'intval', $content_ids ) ),
-		);
+		];
 
 		$used_elsewhere = array_diff(
 			array_merge( $usage['content'], $usage['thumbnail'] ),
-			array( $post_id )
+			[ $post_id ]
 		);
 
 		if ( ! empty( $used_elsewhere ) ) {
 			wp_update_post(
-				array(
+				[
 					'ID'          => $attachment_id,
 					'post_parent' => (int) reset( $used_elsewhere ),
-				)
+				]
 			);
 			continue;
 		}
