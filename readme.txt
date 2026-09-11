@@ -1,11 +1,12 @@
 === ClassicPack ===
 Contributors: butterflymedia
+Donate link: https://buymeacoffee.com/wolffe
 Tags: classicpress, modules, toolkit, admin, utilities
 Requires at least: 6.2
 Requires PHP: 8.0
 Requires CP: 2.5
-Tested up to: 2.7
-Stable tag: 0.3.7
+Tested up to: 2.7.2
+Stable tag: 0.3.8
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -14,6 +15,8 @@ A modular toolkit for ClassicPress and WordPress. Enable modules from the Classi
 == Description ==
 
 ClassicPack groups optional features into **modules**. Each module can be switched on or off from the ClassicPack screen—nothing runs until you enable it.
+
+Find more tools at [ClassicPress Plugins](https://getbutterfly.com/classicpress-plugins/).
 
 **Examples of what you can enable:**
 
@@ -49,6 +52,10 @@ Some modules target the Classic editor or list tables only. Enable modules indiv
 Enabled modules are stored in the `classicpack_modules` option. Individual modules may add their own options where documented.
 
 == Changelog ==
+
+= 0.3.8 =
+* Confirm compatibility with ClassicPress 2.7.2.
+* Add links to ClassicPress Plugins and the donation page.
 
 = 0.3.7 =
 * Add per-page and total redirect counts, pagination, and plain-language help for Delete and Delete All to Core Redirects Manager
