@@ -204,7 +204,8 @@ function classicpress_lightweight_comments_render_comments( $post_id ) {
 
 	$comments = $wpdb->get_results(
 		$wpdb->prepare(
-			"SELECT * FROM {$table_name} WHERE post_id = %d ORDER BY created_at ASC",
+			'SELECT * FROM %i WHERE post_id = %d ORDER BY created_at ASC',
+			$table_name,
 			$post_id
 		)
 	);
@@ -384,7 +385,8 @@ function classicpress_lightweight_comments_send_notifications( $post_id, $parent
 
 		$parent = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT author_name, author_email FROM {$table_name} WHERE id = %d",
+				'SELECT author_name, author_email FROM %i WHERE id = %d',
+				$table_name,
 				$parent_id
 			)
 		);
@@ -551,19 +553,24 @@ function classicpress_lightweight_comments_admin_page() {
 
 	$table_name = $wpdb->prefix . 'classicpack_comments';
 
-	$feedback = $wpdb->get_results( "SELECT * FROM {$table_name} ORDER BY created_at DESC" );
+	$feedback = $wpdb->get_results(
+		$wpdb->prepare(
+			'SELECT * FROM %i ORDER BY created_at DESC',
+			$table_name
+		)
+	);
 
 	?>
 	<div class="wrap">
 		<h1 class="wp-heading-inline"><?php esc_html_e( 'Lightweight Comments', 'classicpack' ); ?></h1>
 
-		<?php if ( isset( $_GET['deleted'] ) ) : ?>
+		<?php if ( isset( $_GET['deleted'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only query arg after redirect. ?>
 			<div class="notice notice-success is-dismissible">
 				<p><?php esc_html_e( 'Feedback deleted.', 'classicpack' ); ?></p>
 			</div>
 		<?php endif; ?>
 
-		<?php if ( isset( $_GET['updated'] ) ) : ?>
+		<?php if ( isset( $_GET['updated'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only query arg after redirect. ?>
 			<div class="notice notice-success is-dismissible">
 				<p><?php esc_html_e( 'Notification settings saved.', 'classicpack' ); ?></p>
 			</div>
