@@ -39,6 +39,11 @@ function classicpack_get_module_registry() {
 			'description' => __( 'Lists automatic redirects that ClassicPress and WordPress store when you change a post URL. Remove ones you do not need to tidy SEO and old links.', 'classicpack' ),
 			'file'        => $base . 'core-redirects-manager/core-redirects-manager.php',
 		],
+		'markdown-endpoint'      => [
+			'label'       => __( 'Markdown Endpoint', 'classicpack' ),
+			'description' => __( 'Serves a Markdown copy of any public post or page when .md is appended to its URL (e.g. /about.md). Helpful for AI/LLM crawlers and tools that prefer plain Markdown over HTML.', 'classicpack' ),
+			'file'        => $base . 'markdown-endpoint/markdown-endpoint.php',
+		],
 		'email-commenters'       => [
 			'label'       => __( 'Email Commenters', 'classicpack' ),
 			'description' => __( 'Send one email to everyone who commented on a chosen post or page. Handy for updates, thank-yous, or follow-ups.', 'classicpack' ),
@@ -89,6 +94,11 @@ function classicpack_get_module_registry() {
 			'description' => __( 'Change the login URL and redirect visitors who hit wp-login.php or /wp-admin/ without signing in. Configure under Settings → Permalinks.', 'classicpack' ),
 			'file'        => $base . 'admin-login/admin-login.php',
 		],
+		'lightweight-comments'   => [
+			'label'       => __( 'Lightweight Comments', 'classicpack' ),
+			'description' => __( 'Add the [lightweight_comments] shortcode to any post or page for threaded visitor feedback, independent of native WordPress comments. Handy for password-protected pages (e.g. client proposals) where you still want comments. Includes a honeypot spam trap and email notifications.', 'classicpack' ),
+			'file'        => $base . 'lightweight-comments/lightweight-comments.php',
+		],
 	];
 }
 
@@ -128,6 +138,11 @@ function classicpack_get_module_admin_action_config() {
 			'mode'       => 'settings',
 			'admin_path' => 'options-permalink.php',
 			'cap'        => 'manage_options',
+		],
+		'lightweight-comments'         => [
+			'mode' => 'details',
+			'page' => 'classicpack-lightweight-comments',
+			'cap'  => 'manage_options',
 		],
 	];
 }
@@ -289,6 +304,11 @@ function classicpack_render_modules_page() {
 			'slugs' => [ 'core-redirects-manager' ],
 		],
 		[
+			'id'    => 'ai',
+			'title' => __( 'AI', 'classicpack' ),
+			'slugs' => [ 'markdown-endpoint' ],
+		],
+		[
 			'id'    => 'media',
 			'title' => __( 'Media', 'classicpack' ),
 			'slugs' => [ 'auto-save-images', 'delete-post-with-attachments' ],
@@ -296,7 +316,7 @@ function classicpack_render_modules_page() {
 		[
 			'id'    => 'content',
 			'title' => __( 'Content', 'classicpack' ),
-			'slugs' => [ 'post-type-switcher', 'duplicate-post' ],
+			'slugs' => [ 'post-type-switcher', 'duplicate-post', 'lightweight-comments' ],
 		],
 		[
 			'id'    => 'users',
