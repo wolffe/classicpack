@@ -200,12 +200,11 @@ function classicpress_lightweight_comments_shortcode() {
 function classicpress_lightweight_comments_render_comments( $post_id ) {
 	global $wpdb;
 
-	$table_name = $wpdb->prefix . 'classicpack_comments';
+	$table_name = esc_sql( $wpdb->prefix . 'classicpack_comments' );
 
 	$comments = $wpdb->get_results(
 		$wpdb->prepare(
-			'SELECT * FROM %i WHERE post_id = %d ORDER BY created_at ASC',
-			$table_name,
+			"SELECT * FROM `{$table_name}` WHERE post_id = %d ORDER BY created_at ASC", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from $wpdb->prefix, escaped with esc_sql().
 			$post_id
 		)
 	);
@@ -381,12 +380,11 @@ function classicpress_lightweight_comments_send_notifications( $post_id, $parent
 	if ( $parent_id > 0 ) {
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . 'classicpack_comments';
+		$table_name = esc_sql( $wpdb->prefix . 'classicpack_comments' );
 
 		$parent = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT author_name, author_email FROM %i WHERE id = %d',
-				$table_name,
+				"SELECT author_name, author_email FROM `{$table_name}` WHERE id = %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from $wpdb->prefix, escaped with esc_sql().
 				$parent_id
 			)
 		);
@@ -551,14 +549,10 @@ function classicpress_lightweight_comments_admin_page() {
 
 	global $wpdb;
 
-	$table_name = $wpdb->prefix . 'classicpack_comments';
+	$table_name = esc_sql( $wpdb->prefix . 'classicpack_comments' );
 
-	$feedback = $wpdb->get_results(
-		$wpdb->prepare(
-			'SELECT * FROM %i ORDER BY created_at DESC',
-			$table_name
-		)
-	);
+	// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared -- Table name from $wpdb->prefix, escaped with esc_sql().
+	$feedback = $wpdb->get_results( "SELECT * FROM `{$table_name}` ORDER BY created_at DESC" );
 
 	?>
 	<div class="wrap">
