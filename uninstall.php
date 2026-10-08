@@ -30,6 +30,7 @@ function classicpack_uninstall_single_site() {
 		'useronline_most',
 		'classicpress_auto_save_images_options',
 		'easy_author_avatar_image_option',
+		'classicpack_lightweight_comments_notify_emails',
 	];
 
 	foreach ( $options as $option_name ) {
@@ -39,10 +40,13 @@ function classicpack_uninstall_single_site() {
 	delete_site_option( 'classicpack_admin_login_page' );
 
 	delete_metadata( 'user', 0, 'classicpack_last_login', '', true );
-	delete_metadata( 'post', 0, 'has_user_restriction', '', true );
+	delete_metadata( 'user', 0, 'easy-author-avatar-profile-image', '', true );
+	delete_post_meta_by_key( 'has_user_restriction' );
+	delete_post_meta_by_key( '_classicpress_skip_remote_images' );
 
 	$tables = [
 		$wpdb->prefix . 'useronline',
+		$wpdb->prefix . 'classicpack_comments',
 	];
 
 	foreach ( $tables as $table_name ) {

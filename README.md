@@ -22,7 +22,7 @@ Use ClassicPack if you want several small admin utilities in one place instead o
 ## Quick start (first-time setup)
 
 1. Install the `classicpack` folder under `wp-content/plugins/` (or install the release zip from your Plugins screen) and **activate** ClassicPack.
-2. In the admin sidebar, open **ClassicPack** (top-level menu). You will see checkboxes for each module, grouped (for example: Performance and SEO, Media, Content, Users).
+2. In the admin sidebar, open **ClassicPack** (top-level menu). You will see checkboxes for each module, grouped (for example: Performance and SEO, AI, Media, Content, Users).
 3. Enable the modules you need and click **Save Changes**. Only enabled modules are loaded on the next request.
 4. Some modules add their own subpage under **ClassicPack** (for example _User Manager_) or a link from the modules list. Others appear only in context (for example a row action on a post list, or a block on a user profile).
 
@@ -47,19 +47,21 @@ If something does not show up, confirm the module is enabled and that you meet t
 
 Enable these on the **ClassicPack** screen. Nothing here runs when the module is off.
 
-| Module                           | What it does (short)                                                                                                                                      | Where you use it                                                           |
-| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| **Core Redirects Manager**       | Lists automatic redirects the CMS stores when a post’s URL changes; you can remove unneeded ones.                                                         | Under **ClassicPress**-related redirects (see module link)                 |
-| **Email Commenters**             | Sends a single email to every address that commented on a chosen post or page.                                                                            | **ClassicPack** submenu: Email Commenters                                  |
-| **Auto Save Images**             | When you publish, can pull hotlinked images into the Media Library.                                                                                       | Settings on the **Auto Save Images** screen                                |
-| **Delete Post with Attachments** | On permanent post delete, can remove media uploaded only to that post when safe.                                                                          | Runs when you trash/delete content (see description on the modules screen) |
-| **Users Online**                 | Shows who is browsing the site and a dashboard summary.                                                                                                   | **ClassicPack** / dashboard widget as implemented                          |
-| **User Manager**                 | Optional Users list columns (e.g. registration, last login) and options to keep posts or pages for logged-in users only.                                  | **ClassicPack → User Manager** and **Users** list                          |
-| **User Content Overview**        | On a user’s profile, shows counts and links for content that user “owns” (by post type, media, optional Woo customer orders) for cleanup or reassignment. | **Users** → edit a user                                                    |
-| **Post type switcher**           | In the **classic** editor, switch an existing item to another public post type (with a warning).                                                          | **Posts** or **Pages** (or CPT) → edit, Publish box                        |
-| **Duplicate post**               | Row action to duplicate a public post type as a draft (content, meta, terms, featured image as applicable).                                               | Post type list tables                                                      |
-| **User Avatar**                  | Profile picture from the Media Library on the user profile screen; replaces Gravatar when set (legacy meta key unchanged).                                | **Users → Profile** / **Users → Edit user**                                |
-| **Admin Login**                  | Custom login URL; redirects for wp-login.php and /wp-admin/ when not signed in.                                                                           | **Settings → Permalinks** (Admin Login section)                            |
+| Module                           | What it does (short)                                                                                                                                        | Where you use it                                                                                   |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Core Redirects Manager**       | Lists automatic redirects the CMS stores when a post’s URL changes; you can remove unneeded ones.                                                           | Under **ClassicPress**-related redirects (see module link)                                         |
+| **Markdown Endpoint**            | Serves a Markdown copy of any public post or page when `.md` is appended to its URL. Helpful for AI/LLM crawlers and tools that prefer Markdown over HTML.  | Append `.md` to any post/page URL (e.g. `/about.md`)                                               |
+| **Email Commenters**             | Sends a single email to every address that commented on a chosen post or page.                                                                              | **ClassicPack** submenu: Email Commenters                                                          |
+| **Auto Save Images**             | When you publish, can pull hotlinked images into the Media Library.                                                                                         | Settings on the **Auto Save Images** screen                                                        |
+| **Delete Post with Attachments** | On permanent post delete, can remove media uploaded only to that post when safe.                                                                            | Runs when you trash/delete content (see description on the modules screen)                         |
+| **Users Online**                 | Shows who is browsing the site and a dashboard summary.                                                                                                     | **ClassicPack** / dashboard widget as implemented                                                  |
+| **User Manager**                 | Optional Users list columns (e.g. registration, last login) and options to keep posts or pages for logged-in users only.                                    | **ClassicPack → User Manager** and **Users** list                                                  |
+| **User Content Overview**        | On a user’s profile, shows counts and links for content that user “owns” (by post type, media, optional Woo customer orders) for cleanup or reassignment.   | **Users** → edit a user                                                                            |
+| **Post type switcher**           | In the **classic** editor, switch an existing item to another public post type (with a warning).                                                            | **Posts** or **Pages** (or CPT) → edit, Publish box                                                |
+| **Duplicate post**               | Row action to duplicate a public post type as a draft (content, meta, terms, featured image as applicable).                                                 | Post type list tables                                                                              |
+| **User Avatar**                  | Profile picture from the Media Library on the user profile screen; replaces Gravatar when set (legacy meta key unchanged).                                  | **Users → Profile** / **Users → Edit user**                                                        |
+| **Admin Login**                  | Custom login URL; redirects for wp-login.php and /wp-admin/ when not signed in.                                                                             | **Settings → Permalinks** (Admin Login section)                                                    |
+| **Lightweight Comments**         | Shortcode-based threaded visitor feedback, independent of native WordPress comments. Useful on password-protected pages (e.g. client web design proposals). | Add `[lightweight_comments]` to a post or page; manage from **ClassicPack → Lightweight Comments** |
 
 Some modules are Classic-editor specific or list-table specific. If you use only the block editor, test before relying on a module.
 
@@ -73,6 +75,15 @@ Some modules are Classic-editor specific or list-table specific. If you use only
 ## Changelog
 
 Release notes match [readme.txt](readme.txt) (plugin directory listing).
+
+### 0.4.0
+
+- Add Markdown Endpoint module: serves a Markdown copy of any public post/page when `.md` is appended to its URL, with a site index, `<link rel="alternate">` discovery tag, and a robots.txt sitemap hint
+- Confirm compatibility with ClassicPress 2.7.3.
+
+### 0.3.9
+
+- Add Lightweight Comments module: shortcode-based threaded feedback (`[lightweight_comments]`), independent of native WordPress comments, with a honeypot spam trap and email notifications
 
 ### 0.3.7
 

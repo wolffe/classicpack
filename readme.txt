@@ -5,8 +5,8 @@ Tags: classicpress, modules, toolkit, admin, utilities
 Requires at least: 6.2
 Requires PHP: 8.0
 Requires CP: 2.5
-Tested up to: 2.7.2
-Stable tag: 0.3.8
+Tested up to: 2.7.3
+Stable tag: 0.4.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -32,6 +32,11 @@ Find more tools at [ClassicPress Plugins](https://getbutterfly.com/classicpress-
 
 * **User Avatar** — Pick a profile picture from the Media Library on your profile; shown instead of Gravatar where avatars appear.
 * **Admin Login** — Custom login URL; redirect visitors who hit wp-login.php or /wp-admin/ without signing in (Settings → Permalinks).
+* **Lightweight Comments** — Add the `[lightweight_comments]` shortcode to any post or page for threaded visitor feedback, independent of native WordPress comments. Useful on password-protected pages, such as client-facing web design proposals, where you want feedback without exposing a public comment thread.
+
+**AI:**
+
+* **Markdown Endpoint** — Serves a Markdown copy of any public post or page when `.md` is appended to its URL. Helpful for AI/LLM crawlers and tools that prefer Markdown over HTML.
 
 Requirements: ClassicPress 2.5+ (or WordPress 6.2+), PHP 8.0+.
 
@@ -52,6 +57,13 @@ Some modules target the Classic editor or list tables only. Enable modules indiv
 Enabled modules are stored in the `classicpack_modules` option. Individual modules may add their own options where documented.
 
 == Changelog ==
+
+= 0.4.0 =
+* Add Markdown Endpoint module: serves a Markdown copy of any public post/page when `.md` is appended to its URL, with a site index, discovery link tag, and robots.txt sitemap hint
+* Confirm compatibility with ClassicPress 2.7.3.
+
+= 0.3.9 =
+* Add Lightweight Comments module: shortcode-based threaded feedback (`[lightweight_comments]`), independent of native WordPress comments, with a honeypot spam trap and email notifications
 
 = 0.3.8 =
 * Confirm compatibility with ClassicPress 2.7.2.
