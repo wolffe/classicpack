@@ -6,7 +6,7 @@ Requires at least: 6.2
 Requires PHP: 8.0
 Requires CP: 2.5
 Tested up to: 2.7.3
-Stable tag: 0.4.0
+Stable tag: 0.5.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -38,6 +38,12 @@ Find more tools at [ClassicPress Plugins](https://getbutterfly.com/classicpress-
 
 * **Markdown Endpoint** — Serves a Markdown copy of any public post or page when `.md` is appended to its URL. Helpful for AI/LLM crawlers and tools that prefer Markdown over HTML.
 
+**Tools:**
+
+* **Forms** — Build contact forms in the admin, place them with the `[classicpack_form id=N]` shortcode and receive submissions by email (wp_mail or SMTP2Go). Honeypot, optional CAPTCHA, optional email log.
+* **Subscribers** — Email published posts to confirmed subscribers. Double opt-in signup form via `[classicpack_subscribe]`, send from the post editor or automatically on publish, queued in small batches with unsubscribe links and List-Unsubscribe headers.
+* **Backup** — Scheduled local database backups with optional gzip, rotation and email delivery, optional wp-content file archives, and restore from the Backup Manager.
+
 Requirements: ClassicPress 2.5+ (or WordPress 6.2+), PHP 8.0+.
 
 == Installation ==
@@ -57,6 +63,14 @@ Some modules target the Classic editor or list tables only. Enable modules indiv
 Enabled modules are stored in the `classicpack_modules` option. Individual modules may add their own options where documented.
 
 == Changelog ==
+
+= 0.5.0 =
+* Add Forms module (from the FX Forms plugin): form builder, `[classicpack_form id=N]` shortcode, wp_mail or SMTP2Go delivery, honeypot, CAPTCHA and email log
+* Add Subscribers module (from the SubPress plugin): double opt-in subscriber list, `[classicpack_subscribe]` form, post-to-email newsletters sent from the editor or automatically on publish, queued batches, unsubscribe links and List-Unsubscribe headers, privacy exporter and eraser
+* Add Backup module (from the FX Backup plugin): scheduled database backups, file archives, rotation, email delivery and restore, in one tabbed screen under ClassicPack
+* Register the backup interval without replacing other plugins' cron schedules
+* Add a Tools category to the modules screen
+* Redesign the ClassicPack screen: intro with module count and documentation link, modules shown as cards in a grid per category, sticky Save Changes
 
 = 0.4.0 =
 * Add Markdown Endpoint module: serves a Markdown copy of any public post/page when `.md` is appended to its URL, with a site index, discovery link tag, and robots.txt sitemap hint
