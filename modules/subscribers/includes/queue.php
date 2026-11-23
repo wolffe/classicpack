@@ -48,17 +48,12 @@ function classicpack_subscribers_process_queue() {
 		return;
 	}
 
-	$in = implode( ',', $ids );
-	// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from $wpdb->prefix; ids are integers.
-	$wpdb->query( "UPDATE {$queue} SET status = 'sending' WHERE id IN ({$in}) AND status = 'queued'" );
-	// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from $wpdb->prefix; ids are integers.
-	$rows = $wpdb->get_results(
-		"SELECT q.id, q.newsletter_id, q.attempts, s.email, s.token, s.status AS subscriber_status, n.post_id, n.subject
-		FROM {$queue} q
-		INNER JOIN {$subscribers} s ON s.id = q.subscriber_id
-		INNER JOIN {$newsletters} n ON n.id = q.newsletter_id
-		WHERE q.id IN ({$in}) AND q.status = 'sending'"
-	);
+	// One %d per queued id, so both statements go through prepare().
+	$in = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
+	// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from $wpdb->prefix; $in holds %d placeholders only.
+	$wpdb->query( $wpdb->prepare( "UPDATE {$queue} SET status = 'sending' WHERE id IN ({$in}) AND status = 'queued'", $ids ) );
+	$rows = $wpdb->get_results( $wpdb->prepare( "SELECT q.id, q.newsletter_id, q.attempts, s.email, s.token, s.status AS subscriber_status, n.post_id, n.subject FROM {$queue} q INNER JOIN {$subscribers} s ON s.id = q.subscriber_id INNER JOIN {$newsletters} n ON n.id = q.newsletter_id WHERE q.id IN ({$in}) AND q.status = 'sending'", $ids ) );
+	// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 	$touched = [];
 	foreach ( $rows as $row ) {

@@ -61,7 +61,7 @@ function classicpack_subscribers_handle_subscribe() {
 
 	if ( isset( $_POST['classicpack_subscribers_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['classicpack_subscribers_nonce'] ) ), 'classicpack_subscribers_subscribe' ) ) {
 		$honeypot = isset( $_POST['classicpack_subscribers_website'] ) ? sanitize_text_field( wp_unslash( $_POST['classicpack_subscribers_website'] ) ) : '';
-		$email    = isset( $_POST['classicpack_subscribers_email'] ) ? classicpack_subscribers_normalize_email( wp_unslash( $_POST['classicpack_subscribers_email'] ) ) : '';
+		$email    = isset( $_POST['classicpack_subscribers_email'] ) ? classicpack_subscribers_normalize_email( sanitize_email( wp_unslash( $_POST['classicpack_subscribers_email'] ) ) ) : '';
 
 		if ( $honeypot !== '' ) {
 			$notice = 'check_email'; // Pretend success so bots learn nothing.
@@ -125,7 +125,7 @@ function classicpack_subscribers_handle_public_requests() {
 	// phpcs:enable WordPress.Security.NonceVerification
 
 	if ( $action === 'one-click' ) {
-		if ( ( $_SERVER['REQUEST_METHOD'] ?? '' ) === 'POST' ) {
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) && 'POST' === sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) ) {
 			classicpack_subscribers_unsubscribe( $token );
 			status_header( 200 );
 			exit;

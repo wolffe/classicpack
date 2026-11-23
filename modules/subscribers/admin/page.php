@@ -184,29 +184,17 @@ function classicpack_subscribers_render_subscribers_tab( $base_url ) {
 	$search = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
 	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
-	$statuses = [ 'pending', 'subscribed', 'unsubscribed' ];
-	$table    = classicpack_subscribers_table();
-	$per_page = 20;
-	$where    = 'WHERE 1=1';
-	$params   = [];
+	$statuses    = [ 'pending', 'subscribed', 'unsubscribed' ];
+	$table       = classicpack_subscribers_table();
+	$per_page    = 20;
+	// A bare % matches everything, so one static query covers every filter combination.
+	$status_like = in_array( $status, $statuses, true ) ? $status : '%';
+	$email_like  = $search !== '' ? '%' . $wpdb->esc_like( $search ) . '%' : '%';
 
-	if ( in_array( $status, $statuses, true ) ) {
-		$where   .= ' AND status = %s';
-		$params[] = $status;
-	}
-	if ( $search !== '' ) {
-		$where   .= ' AND email LIKE %s';
-		$params[] = '%' . $wpdb->esc_like( $search ) . '%';
-	}
-
-	// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared -- Table name from $wpdb->prefix; the WHERE clause only holds placeholders.
-	$total = $params
-		? (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} {$where}", $params ) )
-		: (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" );
-	$params[] = $per_page;
-	$params[] = ( $page - 1 ) * $per_page;
-	$rows     = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table} {$where} ORDER BY id DESC LIMIT %d OFFSET %d", $params ) );
-	// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
+	// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from $wpdb->prefix.
+	$total = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE status LIKE %s AND email LIKE %s", $status_like, $email_like ) );
+	$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table} WHERE status LIKE %s AND email LIKE %s ORDER BY id DESC LIMIT %d OFFSET %d", $status_like, $email_like, $per_page, ( $page - 1 ) * $per_page ) );
+	// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	?>
 	<div class="classicpack-subscribers-stats">
 		<?php foreach ( $statuses as $key ) { ?>

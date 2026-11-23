@@ -77,7 +77,7 @@ function classicpack_subscribers_handle_send() {
 	}
 
 	$subject    = isset( $_POST['subject'] ) ? sanitize_text_field( wp_unslash( $_POST['subject'] ) ) : '';
-	$send_again = isset( $_POST['send_again'] ) && (string) wp_unslash( $_POST['send_again'] ) === '1';
+	$send_again = isset( $_POST['send_again'] ) && sanitize_key( wp_unslash( $_POST['send_again'] ) ) === '1';
 	$result     = classicpack_subscribers_queue_newsletter( $post_id, $subject, $send_again );
 	$notice     = is_wp_error( $result ) ? $result->get_error_code() : 'queued';
 

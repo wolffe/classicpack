@@ -145,8 +145,9 @@ function classicpack_subscribers_queue_newsletter( $post_id, $subject = '', $sen
 			$params[]       = $newsletter_id;
 			$params[]       = $subscriber_id;
 		}
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared -- Table name from $wpdb->prefix; placeholders built above.
-		$wpdb->query( $wpdb->prepare( "INSERT INTO {$queue_table} ( newsletter_id, subscriber_id ) VALUES " . implode( ', ', $placeholders ), $params ) );
+		$sql = "INSERT INTO {$queue_table} ( newsletter_id, subscriber_id ) VALUES " . implode( ', ', $placeholders );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Prepared just below; the %d placeholders are assembled above, one pair per subscriber.
+		$wpdb->query( $wpdb->prepare( $sql, $params ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- See above.
 	}
 
 	return $newsletter_id;
