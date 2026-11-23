@@ -50,10 +50,10 @@ function classicpack_subscribers_process_queue() {
 
 	// One %d per queued id, so both statements go through prepare().
 	$in = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
-	// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names from $wpdb->prefix; $in holds %d placeholders only.
+	// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Table names from $wpdb->prefix; $in holds one %d per id, which the sniff cannot count.
 	$wpdb->query( $wpdb->prepare( "UPDATE {$queue} SET status = 'sending' WHERE id IN ({$in}) AND status = 'queued'", $ids ) );
 	$rows = $wpdb->get_results( $wpdb->prepare( "SELECT q.id, q.newsletter_id, q.attempts, s.email, s.token, s.status AS subscriber_status, n.post_id, n.subject FROM {$queue} q INNER JOIN {$subscribers} s ON s.id = q.subscriber_id INNER JOIN {$newsletters} n ON n.id = q.newsletter_id WHERE q.id IN ({$in}) AND q.status = 'sending'", $ids ) );
-	// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+	// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 
 	$touched = [];
 	foreach ( $rows as $row ) {
