@@ -1,0 +1,254 @@
+<?php
+// phpcs:disable WordPress.WP.AlternativeFunctions -- Restore streams dumps and writes a mysql client file outside WP_Filesystem.
+// phpcs:disable WordPress.PHP.DiscouragedPHPFunctions.system_calls_exec -- mysql and tar are required for restore.
+// phpcs:disable WordPress.DB.RestrictedFunctions -- Bulk SQL import uses mysqli_multi_query; $wpdb->query() cannot run a dump.
+
+function classicpack_backup_resolve_backup_path( $basename, $export_dir ) {
+	$basename = sanitize_file_name( $basename );
+	if ( $basename === '' || $export_dir === '' ) {
+		return '';
+	}
+	$export_dir  = rtrim( wp_normalize_path( $export_dir ), '/' );
+	$path        = $export_dir . '/' . $basename;
+	$real_export = realpath( $export_dir );
+	$real_path   = realpath( $path );
+	if ( $real_export === false || $real_path === false ) {
+		return '';
+	}
+	if ( strpos( $real_path, $real_export ) !== 0 ) {
+		return '';
+	}
+	if ( ! is_file( $real_path ) || ! classicpack_backup_is_rotatable_backup_file( $basename ) ) {
+		return '';
+	}
+	return $real_path;
+}
+
+function classicpack_backup_is_database_backup( $basename ) {
+	return (bool) preg_match( '/^Backup_.+\.sql(\.gz)?$/i', $basename );
+}
+
+function classicpack_backup_is_files_backup( $basename ) {
+	return (bool) preg_match( '/^(Files_Backup_|backup_).+\.tar\.gz$/i', $basename );
+}
+
+function classicpack_backup_mysql_cli_available() {
+	if ( ! function_exists( 'exec' ) ) {
+		return false;
+	}
+	exec( 'mysql --version 2>&1', $output, $return_var );
+	return $return_var === 0;
+}
+
+function classicpack_backup_decompress_sql_dump( $path ) {
+	if ( preg_match( '/\.gz$/i', $path ) ) {
+		if ( ! function_exists( 'gzopen' ) ) {
+			return new WP_Error( 'restore', __( 'GZIP extension is required to read this backup.', 'classicpack' ) );
+		}
+		$temp = wp_tempnam( 'classicpack-backup-restore.sql' );
+		if ( $temp === false ) {
+			return new WP_Error( 'restore', __( 'Could not create a temporary file.', 'classicpack' ) );
+		}
+		$in  = gzopen( $path, 'rb' );
+		$out = fopen( $temp, 'wb' );
+		if ( ! $in || ! $out ) {
+			if ( $in ) {
+				gzclose( $in );
+			}
+			if ( $out ) {
+				fclose( $out );
+			}
+			wp_delete_file( $temp );
+			return new WP_Error( 'restore', __( 'Could not decompress the backup file.', 'classicpack' ) );
+		}
+		while ( ! gzeof( $in ) ) {
+			fwrite( $out, gzread( $in, 512000 ) );
+		}
+		gzclose( $in );
+		fclose( $out );
+		return $temp;
+	}
+	return $path;
+}
+
+function classicpack_backup_restore_database_cli( $sql_path ) {
+	$host = DB_HOST;
+	$port = null;
+	if ( strpos( $host, ':' ) !== false ) {
+		list($host, $port) = explode( ':', $host, 2 );
+	}
+	$cnf = wp_tempnam( 'classicpack-backup-mysql.cnf' );
+	if ( $cnf === false ) {
+		return false;
+	}
+	$lines = [
+		'[client]',
+		'user=' . DB_USER,
+		'password=' . DB_PASSWORD,
+		'host=' . $host,
+	];
+	if ( $port !== null && $port !== '' ) {
+		$lines[] = 'port=' . $port;
+	}
+	file_put_contents( $cnf, implode( "\n", $lines ) . "\n" );
+
+	$cmd        = 'mysql --defaults-extra-file=' . escapeshellarg( $cnf )
+		. ' ' . escapeshellarg( DB_NAME )
+		. ' < ' . escapeshellarg( $sql_path );
+	$return_var = 1;
+	exec( $cmd, $output, $return_var );
+	wp_delete_file( $cnf );
+	return $return_var === 0;
+}
+
+function classicpack_backup_restore_database_mysqli( $sql_path ) {
+	global $wpdb;
+
+	if ( ! isset( $wpdb->dbh ) || ! ( $wpdb->dbh instanceof mysqli ) ) {
+		return new WP_Error( 'restore', __( 'Database driver does not support bulk import.', 'classicpack' ) );
+	}
+
+	$sql = file_get_contents( $sql_path );
+	if ( $sql === false || $sql === '' ) {
+		return new WP_Error( 'restore', __( 'Backup file is empty or unreadable.', 'classicpack' ) );
+	}
+
+	mysqli_report( MYSQLI_REPORT_OFF );
+	if ( ! mysqli_multi_query( $wpdb->dbh, $sql ) ) {
+		return new WP_Error( 'restore', mysqli_error( $wpdb->dbh ) );
+	}
+
+	do {
+		if ( $result = mysqli_store_result( $wpdb->dbh ) ) {
+			mysqli_free_result( $result );
+		}
+	} while ( mysqli_more_results( $wpdb->dbh ) && mysqli_next_result( $wpdb->dbh ) );
+
+	if ( mysqli_errno( $wpdb->dbh ) ) {
+		return new WP_Error( 'restore', mysqli_error( $wpdb->dbh ) );
+	}
+
+	return true;
+}
+
+function classicpack_backup_restore_memory_limit() {
+	return '512M';
+}
+
+function classicpack_backup_restore_database( $path ) {
+	if ( ! classicpack_backup_is_database_backup( basename( $path ) ) ) {
+		return new WP_Error( 'restore', __( 'Not a database backup file.', 'classicpack' ) );
+	}
+
+	add_filter( 'admin_memory_limit', 'classicpack_backup_restore_memory_limit' );
+	wp_raise_memory_limit( 'admin' );
+	set_time_limit( 600 );
+
+	$sql_path = classicpack_backup_decompress_sql_dump( $path );
+	if ( is_wp_error( $sql_path ) ) {
+		return $sql_path;
+	}
+
+	$temp   = ( $sql_path !== $path );
+	$result = false;
+
+	if ( classicpack_backup_mysql_cli_available() ) {
+		$result = classicpack_backup_restore_database_cli( $sql_path );
+		if ( $result ) {
+			if ( $temp ) {
+				wp_delete_file( $sql_path );
+			}
+			return true;
+		}
+	}
+
+	$result = classicpack_backup_restore_database_mysqli( $sql_path );
+	if ( $temp ) {
+		wp_delete_file( $sql_path );
+	}
+
+	if ( is_wp_error( $result ) ) {
+		return $result;
+	}
+	if ( $result === true ) {
+		return true;
+	}
+
+	return new WP_Error( 'restore', __( 'Database restore failed.', 'classicpack' ) );
+}
+
+function classicpack_backup_restore_files( $path, $export_dir = '' ) {
+	if ( ! classicpack_backup_is_files_backup( basename( $path ) ) ) {
+		return new WP_Error( 'restore', __( 'Not a file archive backup.', 'classicpack' ) );
+	}
+	if ( ! classicpack_backup_tar_available() ) {
+		return new WP_Error( 'restore', __( 'File restore requires tar and exec() on the server.', 'classicpack' ) );
+	}
+
+	if ( $export_dir === '' ) {
+		$export_dir = classicpack_backup_get_options()['export_dir'] ?? '';
+	}
+
+	$abspath = trailingslashit( wp_normalize_path( ABSPATH ) );
+	if ( ! is_writable( $abspath ) ) {
+		return new WP_Error( 'restore', __( 'Site root is not writable.', 'classicpack' ) );
+	}
+
+	$exclude = classicpack_backup_export_exclude_pattern( $export_dir );
+	$parts   = [ 'tar', '-xzf', escapeshellarg( $path ), '-C', escapeshellarg( rtrim( $abspath, '/' ) ) ];
+	if ( $exclude !== '' ) {
+		$parts[] = '--exclude';
+		$parts[] = escapeshellarg( $exclude );
+	}
+	$return_var = 1;
+	exec( implode( ' ', $parts ), $output, $return_var );
+	if ( $return_var !== 0 ) {
+		return new WP_Error( 'restore', __( 'tar extract failed. Check permissions and disk space.', 'classicpack' ) );
+	}
+	return true;
+}
+
+function classicpack_backup_restore_confirm_valid( $text ) {
+	$text = trim( (string) $text );
+	if ( $text === 'RESTORE' ) {
+		return true;
+	}
+	return $text !== '' && $text === get_bloginfo( 'name' );
+}
+
+function classicpack_backup_list_disk_backups( $export_dir ) {
+	$items      = [];
+	$export_dir = rtrim( (string) $export_dir, '/\\' );
+	if ( $export_dir === '' || ! is_dir( $export_dir ) ) {
+		return $items;
+	}
+	$handle = opendir( $export_dir );
+	if ( $handle === false ) {
+		return $items;
+	}
+	$file = readdir( $handle );
+	while ( false !== $file ) {
+		if ( classicpack_backup_is_rotatable_backup_file( $file ) ) {
+			$path = $export_dir . '/' . $file;
+			if ( is_file( $path ) ) {
+				$mtime   = filemtime( $path );
+				$items[] = [
+					'basename' => $file,
+					'path'     => wp_normalize_path( $path ),
+					'size'     => filesize( $path ),
+					'mtime'    => $mtime !== false ? $mtime : 0,
+					'type'     => classicpack_backup_is_files_backup( $file ) ? 'files' : 'database',
+				];
+			}
+		}
+		$file = readdir( $handle );
+	}
+	closedir( $handle );
+	usort(
+		$items,
+		function ( $a, $b ) {
+			return $b['mtime'] <=> $a['mtime'];
+		}
+	);
+	return $items;
+}

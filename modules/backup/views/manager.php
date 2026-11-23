@@ -1,0 +1,165 @@
+<?php
+
+$cfg            = classicpack_backup_get_options();
+$export_dir     = $cfg['export_dir'] ?? '';
+$restore_notice = '';
+
+if ( isset( $_POST['classicpack_backup_restore_db'] ) || isset( $_POST['classicpack_backup_restore_files'] ) ) {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_die( esc_html__( 'You do not have permission to restore backups.', 'classicpack' ) );
+	}
+	check_admin_referer( 'classicpack_backup_restore' );
+
+	$confirm_text = isset( $_POST['confirm_text'] ) ? sanitize_text_field( wp_unslash( $_POST['confirm_text'] ) ) : '';
+	$backup_file  = isset( $_POST['backup_file'] ) ? sanitize_file_name( wp_unslash( $_POST['backup_file'] ) ) : '';
+
+	if ( ! classicpack_backup_restore_confirm_valid( $confirm_text ) ) {
+		$restore_notice = [
+			'type' => 'error',
+			'text' => __( 'Confirmation did not match. Type your site name or RESTORE to proceed.', 'classicpack' ),
+		];
+	} else {
+		$backup_path = classicpack_backup_resolve_backup_path( $backup_file, $export_dir );
+		if ( $backup_path === '' ) {
+			$restore_notice = [
+				'type' => 'error',
+				'text' => __( 'Invalid backup file.', 'classicpack' ),
+			];
+		} elseif ( isset( $_POST['classicpack_backup_restore_db'] ) ) {
+			$result = classicpack_backup_restore_database( $backup_path );
+			if ( is_wp_error( $result ) ) {
+				$restore_notice = [
+					'type' => 'error',
+					'text' => $result->get_error_message(),
+				];
+			} else {
+				$restore_notice = [
+					'type' => 'updated',
+					'text' => sprintf( __( 'Database restored from %s.', 'classicpack' ), basename( $backup_path ) ),
+				];
+			}
+		} else {
+			$result = classicpack_backup_restore_files( $backup_path, $export_dir );
+			if ( is_wp_error( $result ) ) {
+				$restore_notice = [
+					'type' => 'error',
+					'text' => $result->get_error_message(),
+				];
+			} else {
+				$restore_notice = [
+					'type' => 'updated',
+					'text' => sprintf( __( 'Files restored from %s.', 'classicpack' ), basename( $backup_path ) ),
+				];
+			}
+		}
+	}
+}
+
+$disk_backups = classicpack_backup_list_disk_backups( $export_dir );
+
+classicpack_backup_render_stats_cards( $export_dir );
+
+if ( $restore_notice !== '' ) {
+	$class = $restore_notice['type'] === 'error' ? 'error' : 'updated';
+	echo '<div id="message" class="' . esc_attr( $class ) . ' fade"><p>' . esc_html( $restore_notice['text'] ) . '</p></div>';
+}
+?>
+
+<?php if ( ! empty( $disk_backups ) ) { ?>
+	<table class="widefat classicpack-backup-backups-table">
+		<thead>
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col"><?php esc_html_e( 'Type', 'classicpack' ); ?></th>
+				<th scope="col"><?php esc_html_e( 'Modified', 'classicpack' ); ?></th>
+				<th scope="col"><?php esc_html_e( 'File (backup name)', 'classicpack' ); ?></th>
+				<th scope="col"><?php esc_html_e( 'Filesize', 'classicpack' ); ?></th>
+				<th scope="col"><?php esc_html_e( 'Actions', 'classicpack' ); ?></th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php
+			$row = 0;
+			foreach ( $disk_backups as $item ) {
+				$download_url = classicpack_backup_get_backup_download_url( $item['path'], $export_dir );
+				$is_db        = ( $item['type'] === 'database' );
+				++$row;
+				?>
+				<tr>
+					<td><?php echo (int) $row; ?></td>
+					<td><?php echo esc_html( classicpack_backup_log_type_label( $item['type'] ) ); ?></td>
+					<td><?php echo esc_html( wp_date( 'Y-m-d H:i:s', $item['mtime'] ) ); ?></td>
+					<td>
+						<?php if ( $download_url !== '' ) { ?>
+							<a href="<?php echo esc_url( $download_url ); ?>"><?php echo esc_html( $item['basename'] ); ?></a>
+							<?php
+						} else {
+							echo esc_html( $item['basename'] );
+						}
+						?>
+					</td>
+					<td><?php echo esc_html( size_format( (int) $item['size'], 2 ) ); ?></td>
+					<td class="classicpack-backup-actions-cell">
+						<?php if ( $is_db ) { ?>
+							<details class="classicpack-backup-restore-details">
+								<summary class="button button-secondary"><?php esc_html_e( 'Restore database', 'classicpack' ); ?></summary>
+								<form method="post" class="classicpack-backup-restore-form">
+									<?php wp_nonce_field( 'classicpack_backup_restore' ); ?>
+									<input type="hidden" name="backup_file" value="<?php echo esc_attr( $item['basename'] ); ?>">
+									<p class="description"><?php esc_html_e( 'This replaces all database tables with the backup. The site may be unusable until restore completes.', 'classicpack' ); ?></p>
+									<p>
+										<label for="confirm_db_<?php echo (int) $row; ?>"><?php esc_html_e( 'Type your site name or RESTORE to confirm', 'classicpack' ); ?></label><br>
+										<input type="text" name="confirm_text" id="confirm_db_<?php echo (int) $row; ?>" class="regular-text" autocomplete="off">
+									</p>
+									<p>
+										<input type="submit" name="classicpack_backup_restore_db" class="button button-primary" value="<?php esc_attr_e( 'Run database restore', 'classicpack' ); ?>">
+									</p>
+								</form>
+							</details>
+						<?php } else { ?>
+							<details class="classicpack-backup-restore-details">
+								<summary class="button button-secondary"><?php esc_html_e( 'Restore files', 'classicpack' ); ?></summary>
+								<form method="post" class="classicpack-backup-restore-form">
+									<?php wp_nonce_field( 'classicpack_backup_restore' ); ?>
+									<input type="hidden" name="backup_file" value="<?php echo esc_attr( $item['basename'] ); ?>">
+									<p class="description"><?php esc_html_e( 'This overwrites wp-content and matching root files from the archive. Does not restore the database.', 'classicpack' ); ?></p>
+									<p>
+										<label for="confirm_files_<?php echo (int) $row; ?>"><?php esc_html_e( 'Type your site name or RESTORE to confirm', 'classicpack' ); ?></label><br>
+										<input type="text" name="confirm_text" id="confirm_files_<?php echo (int) $row; ?>" class="regular-text" autocomplete="off">
+									</p>
+									<p>
+										<input type="submit" name="classicpack_backup_restore_files" class="button button-primary" value="<?php esc_attr_e( 'Run file restore', 'classicpack' ); ?>">
+									</p>
+								</form>
+							</details>
+						<?php } ?>
+					</td>
+				</tr>
+			<?php } ?>
+		</tbody>
+	</table>
+<?php } else { ?>
+	<div id="poststuff">
+		<div class="postbox">
+			<h3 class="hndle"><span><?php esc_html_e( 'No backups on disk', 'classicpack' ); ?></span></h3>
+			<div class="inside">
+				<p><?php esc_html_e( 'No backup files were found in your backup folder. Run a scheduled backup or create a file archive from Files Manager.', 'classicpack' ); ?></p>
+			</div>
+		</div>
+	</div>
+<?php } ?>
+
+<div id="poststuff">
+	<div class="postbox">
+		<h3 class="hndle"><span><?php esc_html_e( 'Manager Status', 'classicpack' ); ?></span></h3>
+		<div class="inside">
+			<p>
+				<strong><?php esc_html_e( 'Your site is protected by ClassicPack Backup.', 'classicpack' ); ?></strong><br>
+				<?php echo wp_kses_post( sprintf( __( 'There are %s backup files on disk.', 'classicpack' ), '<strong>' . count( $disk_backups ) . '</strong>' ) ); ?>
+			</p>
+			<p><span class="description"><?php esc_html_e( 'Database and file archives are stored in your backup folder. Copy important backups offsite before restoring on a live site.', 'classicpack' ); ?></span></p>
+			<?php classicpack_backup_render_environment_badges(); ?>
+		</div>
+	</div>
+</div>
+

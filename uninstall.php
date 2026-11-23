@@ -31,6 +31,18 @@ function classicpack_uninstall_single_site() {
 		'classicpress_auto_save_images_options',
 		'easy_author_avatar_image_option',
 		'classicpack_lightweight_comments_notify_emails',
+		'classicpack_forms_db_version',
+		'classicpack_forms_mailer',
+		'classicpack_forms_smtp2go_key',
+		'classicpack_forms_log_enabled',
+		'classicpack_forms_log_max',
+		'classicpack_backup_options',
+		'classicpack_subscribers_db_version',
+		'classicpack_subscribers_auto_send',
+		'classicpack_subscribers_from_name',
+		'classicpack_subscribers_from_email',
+		'classicpack_subscribers_subject_template',
+		'classicpack_subscribers_batch_size',
 	];
 
 	foreach ( $options as $option_name ) {
@@ -38,6 +50,16 @@ function classicpack_uninstall_single_site() {
 	}
 
 	delete_site_option( 'classicpack_admin_login_page' );
+
+	wp_clear_scheduled_hook( 'classicpack_backup_cron' );
+	wp_clear_scheduled_hook( 'classicpack_subscribers_process_queue' );
+
+	// Forms: form posts, their meta, and the short-lived stash/CAPTCHA transients.
+	$form_ids = $wpdb->get_col( "SELECT ID FROM {$wpdb->posts} WHERE post_type = 'classicpack_form'" );
+	foreach ( $form_ids as $form_id ) {
+		wp_delete_post( (int) $form_id, true );
+	}
+	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_classicpack\_forms\_%' OR option_name LIKE '\_transient\_timeout\_classicpack\_forms\_%'" );
 
 	delete_metadata( 'user', 0, 'classicpack_last_login', '', true );
 	delete_metadata( 'user', 0, 'easy-author-avatar-profile-image', '', true );
@@ -47,6 +69,10 @@ function classicpack_uninstall_single_site() {
 	$tables = [
 		$wpdb->prefix . 'useronline',
 		$wpdb->prefix . 'classicpack_comments',
+		$wpdb->prefix . 'classicpack_forms_log',
+		$wpdb->prefix . 'classicpack_subscribers',
+		$wpdb->prefix . 'classicpack_subscriber_newsletters',
+		$wpdb->prefix . 'classicpack_subscriber_queue',
 	];
 
 	foreach ( $tables as $table_name ) {

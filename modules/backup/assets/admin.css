@@ -1,0 +1,262 @@
+/* ClassicPack Backup admin — layout and boxes only; form controls use core ClassicPress styles */
+
+.classicpack-backup-wrap {
+    max-width: 1200px;
+}
+
+.classicpack-backup-header {
+    margin: 0 0 16px;
+    padding: 0;
+}
+
+.classicpack-backup-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    font-size: 23px;
+    font-weight: 400;
+    line-height: 1.3;
+    color: #1d2327;
+}
+
+.classicpack-backup-title .dashicons {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+    color: #2271b1;
+}
+
+.classicpack-backup-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin: 0 0 20px;
+}
+
+.classicpack-backup-stat-card {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-left: 4px solid #2271b1;
+    border-radius: 2px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+    padding: 14px 16px;
+}
+
+.classicpack-backup-stat-value {
+    display: block;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #1d2327;
+}
+
+.classicpack-backup-stat-label {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: #646970;
+}
+
+.classicpack-backup-note {
+    margin: -8px 0 16px;
+    font-size: 12px;
+    color: #646970;
+    font-style: italic;
+}
+
+.classicpack-backup-wrap #poststuff {
+    padding-top: 0;
+}
+
+.classicpack-backup-wrap .postbox {
+    border: 1px solid #c3c4c7;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+    margin-bottom: 16px;
+}
+
+.classicpack-backup-wrap .postbox > h3,
+.classicpack-backup-wrap .postbox .hndle {
+    border-bottom: 1px solid #c3c4c7;
+    background: #f6f7f7;
+    padding: 10px 14px;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.classicpack-backup-wrap .postbox > .inside,
+.classicpack-backup-wrap .postbox .inside {
+    padding: 14px 16px 16px;
+}
+
+.classicpack-backup-wrap .postbox-container {
+    margin-bottom: 0;
+}
+
+.classicpack-backup-subheading {
+    margin: 0 0 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.classicpack-backup-requirements-wrap {
+    margin: 0 0 20px;
+    padding: 14px 16px;
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 2px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.classicpack-backup-requirements-wrap .classicpack-backup-subheading {
+    margin-bottom: 12px;
+}
+
+.classicpack-backup-badges-wrap {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #dcdcde;
+}
+
+.classicpack-backup-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.classicpack-backup-badge {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 2px;
+    max-width: 220px;
+    padding: 6px 10px;
+    border-radius: 2px;
+    border: 1px solid #c3c4c7;
+    background: #f6f7f7;
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+.classicpack-backup-badge__label {
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.classicpack-backup-badge__detail {
+    color: #50575e;
+    word-break: break-word;
+}
+
+.classicpack-backup-badge--ok {
+    border-color: #8ed1a8;
+    background: #edfaef;
+}
+
+.classicpack-backup-badge--ok .classicpack-backup-badge__label {
+    color: #1e4620;
+}
+
+.classicpack-backup-badge--warn {
+    border-color: #e6c878;
+    background: #fff8e5;
+}
+
+.classicpack-backup-badge--warn .classicpack-backup-badge__label {
+    color: #614200;
+}
+
+.classicpack-backup-badge--fail {
+    border-color: #e8a0a0;
+    background: #fcf0f1;
+}
+
+.classicpack-backup-badge--fail .classicpack-backup-badge__label {
+    color: #5c1215;
+}
+
+.classicpack-backup-badge--neutral {
+    border-color: #c3c4c7;
+    background: #f6f7f7;
+}
+
+.classicpack-backup-diagnostics-meta {
+    margin: 0 0 12px;
+    padding: 10px 12px;
+    background: #f6f7f7;
+    border: 1px solid #dcdcde;
+    border-radius: 2px;
+    font-size: 12px;
+    color: #50575e;
+    line-height: 1.6;
+}
+
+.classicpack-backup-diagnostics-meta strong {
+    color: #1d2327;
+}
+
+.classicpack-backup-wrap table.widefat {
+    border: 1px solid #c3c4c7;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.classicpack-backup-wrap table.widefat thead th,
+.classicpack-backup-wrap table.widefat tfoot th {
+    background: #f6f7f7;
+}
+
+.classicpack-backup-wrap table.widefat tbody tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+.classicpack-backup-wrap .classicpack-backup-panel-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+}
+
+@media (min-width: 960px) {
+    .classicpack-backup-panel-grid--split {
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+}
+
+.classicpack-backup-actions-cell {
+    min-width: 200px;
+    vertical-align: top;
+}
+
+.classicpack-backup-restore-details {
+    margin: 0;
+}
+
+.classicpack-backup-restore-details summary {
+    cursor: pointer;
+    display: inline-block;
+    margin-bottom: 6px;
+}
+
+.classicpack-backup-restore-form {
+    margin-top: 10px;
+    padding: 12px;
+    background: #f6f7f7;
+    border: 1px solid #dcdcde;
+    border-radius: 2px;
+    max-width: 420px;
+}
+
+.classicpack-backup-restore-form .description {
+    margin: 0 0 10px;
+    color: #b32d2e;
+    font-weight: 600;
+}
+
+.classicpack-backup-backups-table {
+    margin-bottom: 20px;
+}

@@ -1,0 +1,45 @@
+.classicpack-subscribers-stats {
+	display: flex;
+	gap: 1.5rem;
+	margin: 1.5rem 0;
+}
+
+.classicpack-subscribers-stat {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	padding: 1rem 1.25rem;
+	min-width: 8rem;
+}
+
+.classicpack-subscribers-stat strong {
+	display: block;
+	font-size: 1.75rem;
+	line-height: 1.2;
+}
+
+.classicpack-subscribers-stat span {
+	color: #646970;
+}
+
+.classicpack-subscribers-filters {
+	margin: 1rem 0;
+}
+
+.classicpack-subscribers-pagination {
+	margin-top: 1rem;
+}
+
+.classicpack-subscribers-preview {
+	width: 100%;
+	max-width: 640px;
+	height: 640px;
+	border: 1px solid #c3c4c7;
+	background: #fff;
+}
+
+.classicpack-subscribers-excerpt {
+	max-height: 8rem;
+	overflow: auto;
+	background: #f6f7f7;
+	padding: 0.5rem 0.75rem;
+}

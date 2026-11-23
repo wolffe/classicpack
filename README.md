@@ -62,6 +62,9 @@ Enable these on the **ClassicPack** screen. Nothing here runs when the module is
 | **User Avatar**                  | Profile picture from the Media Library on the user profile screen; replaces Gravatar when set (legacy meta key unchanged).                                  | **Users → Profile** / **Users → Edit user**                                                        |
 | **Admin Login**                  | Custom login URL; redirects for wp-login.php and /wp-admin/ when not signed in.                                                                             | **Settings → Permalinks** (Admin Login section)                                                    |
 | **Lightweight Comments**         | Shortcode-based threaded visitor feedback, independent of native WordPress comments. Useful on password-protected pages (e.g. client web design proposals). | Add `[lightweight_comments]` to a post or page; manage from **ClassicPack → Lightweight Comments** |
+| **Forms**                        | Contact forms built in the admin and placed with `[classicpack_form id=N]`; submissions arrive by email (wp_mail or SMTP2Go), with honeypot, optional CAPTCHA and email log. | **ClassicPack → Forms** (forms) and **ClassicPack → Forms Settings** (mailer, log)           |
+| **Subscribers**                  | Double opt-in subscriber list and post-to-email newsletters: send from the post editor or automatically on publish, queued in batches, with unsubscribe links. | Add `[classicpack_subscribe]` to a page; manage from **ClassicPack → Subscribers**                 |
+| **Backup**                       | Scheduled local database backups (gzip, rotation, email delivery), optional wp-content archives, and restore.                                              | **ClassicPack → Backup** (Settings, Backup Manager, Files Manager tabs)                           |
 
 Some modules are Classic-editor specific or list-table specific. If you use only the block editor, test before relying on a module.
 
@@ -75,6 +78,15 @@ Some modules are Classic-editor specific or list-table specific. If you use only
 ## Changelog
 
 Release notes match [readme.txt](readme.txt) (plugin directory listing).
+
+### 0.5.0
+
+- Add Forms module (from the FX Forms plugin): form builder, `[classicpack_form id=N]` shortcode, wp_mail or SMTP2Go delivery, honeypot, CAPTCHA and email log
+- Add Subscribers module (from the SubPress plugin): double opt-in subscriber list, `[classicpack_subscribe]` form, post-to-email newsletters sent from the editor or automatically on publish, queued batches, unsubscribe links and List-Unsubscribe headers, privacy exporter and eraser
+- Add Backup module (from the FX Backup plugin): scheduled database backups, file archives, rotation, email delivery and restore, in one tabbed screen under ClassicPack
+- Register the backup interval without replacing other plugins' cron schedules
+- Add a Tools category to the modules screen
+- Redesign the ClassicPack screen: intro with module count and documentation link, modules shown as cards in a grid per category, sticky Save Changes
 
 ### 0.4.0
 

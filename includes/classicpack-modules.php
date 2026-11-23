@@ -99,6 +99,21 @@ function classicpack_get_module_registry() {
 			'description' => __( 'Add the [lightweight_comments] shortcode to any post or page for threaded visitor feedback, independent of native WordPress comments. Handy for password-protected pages (e.g. client proposals) where you still want comments. Includes a honeypot spam trap and email notifications.', 'classicpack' ),
 			'file'        => $base . 'lightweight-comments/lightweight-comments.php',
 		],
+		'forms'                  => [
+			'label'       => __( 'Forms', 'classicpack' ),
+			'description' => __( 'Contact forms: build a form, place it with the [classicpack_form id=N] shortcode and receive submissions by email (wp_mail or SMTP2Go), with a honeypot, optional CAPTCHA and an optional email log.', 'classicpack' ),
+			'file'        => $base . 'forms/forms.php',
+		],
+		'backup'                 => [
+			'label'       => __( 'Backup', 'classicpack' ),
+			'description' => __( 'Scheduled local database backups with optional gzip, rotation, email delivery and wp-content file archives, plus restore from the Backup Manager.', 'classicpack' ),
+			'file'        => $base . 'backup/backup.php',
+		],
+		'subscribers'            => [
+			'label'       => __( 'Subscribers', 'classicpack' ),
+			'description' => __( 'Email published posts to confirmed subscribers. Double opt-in signup with the [classicpack_subscribe] shortcode, sending from the post editor or automatically on publish, queued in small batches.', 'classicpack' ),
+			'file'        => $base . 'subscribers/subscribers.php',
+		],
 	];
 }
 
@@ -137,11 +152,27 @@ function classicpack_get_module_admin_action_config() {
 		'admin-login'                  => [
 			'mode'       => 'settings',
 			'admin_path' => 'options-permalink.php',
+			'hash'       => 'classicpack-admin-login-page-input',
 			'cap'        => 'manage_options',
 		],
 		'lightweight-comments'         => [
 			'mode' => 'details',
 			'page' => 'classicpack-lightweight-comments',
+			'cap'  => 'manage_options',
+		],
+		'forms'                        => [
+			'mode'       => 'details',
+			'admin_path' => 'edit.php?post_type=classicpack_form',
+			'cap'        => 'manage_options',
+		],
+		'backup'                       => [
+			'mode' => 'settings',
+			'page' => 'classicpack-backup',
+			'cap'  => 'manage_options',
+		],
+		'subscribers'                  => [
+			'mode' => 'details',
+			'page' => 'classicpack-subscribers',
 			'cap'  => 'manage_options',
 		],
 	];
@@ -304,9 +335,9 @@ function classicpack_render_modules_page() {
 			'slugs' => [ 'core-redirects-manager' ],
 		],
 		[
-			'id'    => 'ai',
-			'title' => __( 'AI', 'classicpack' ),
-			'slugs' => [ 'markdown-endpoint' ],
+			'id'    => 'content',
+			'title' => __( 'Content', 'classicpack' ),
+			'slugs' => [ 'post-type-switcher', 'duplicate-post', 'lightweight-comments' ],
 		],
 		[
 			'id'    => 'media',
@@ -314,19 +345,24 @@ function classicpack_render_modules_page() {
 			'slugs' => [ 'auto-save-images', 'delete-post-with-attachments' ],
 		],
 		[
-			'id'    => 'content',
-			'title' => __( 'Content', 'classicpack' ),
-			'slugs' => [ 'post-type-switcher', 'duplicate-post', 'lightweight-comments' ],
-		],
-		[
 			'id'    => 'users',
 			'title' => __( 'Users', 'classicpack' ),
-			'slugs' => [ 'email-commenters', 'users-online', 'user-manager', 'user-content', 'user-avatar' ],
+			'slugs' => [ 'email-commenters', 'subscribers', 'users-online', 'user-manager', 'user-content', 'user-avatar' ],
 		],
 		[
 			'id'    => 'security',
 			'title' => __( 'Security', 'classicpack' ),
 			'slugs' => [ 'admin-login' ],
+		],
+		[
+			'id'    => 'tools',
+			'title' => __( 'Tools', 'classicpack' ),
+			'slugs' => [ 'forms', 'backup' ],
+		],
+		[
+			'id'    => 'ai',
+			'title' => __( 'AI', 'classicpack' ),
+			'slugs' => [ 'markdown-endpoint' ],
 		],
 	];
 	$enabled   = array_fill_keys( classicpack_get_enabled_modules(), true );
@@ -334,7 +370,33 @@ function classicpack_render_modules_page() {
 	$screen_id = 'classicpack-modules';
 	?>
 	<div class="wrap classicpack-modules-wrap">
-		<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+		<h1 class="screen-reader-text"><?php echo esc_html( get_admin_page_title() ); ?></h1>
+
+		<header class="classicpack-hero">
+			<svg class="classicpack-hero__logo" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+				<path d="M24 5 42 14v20L24 43 6 34V14l18-9z" />
+				<path d="M6 14l18 9 18-9M24 23v20" />
+				<path d="M15 9.5l18 9" />
+			</svg>
+			<div>
+				<h2 class="classicpack-hero__title"><?php esc_html_e( 'ClassicPack', 'classicpack' ); ?></h2>
+				<p class="classicpack-hero__text"><?php esc_html_e( 'Optional features for ClassicPress in one plugin. Switch a module on and it loads; switch it off and none of its code runs.', 'classicpack' ); ?></p>
+				<p class="classicpack-hero__meta">
+					<?php
+					echo wp_kses(
+						sprintf(
+							/* translators: 1: enabled module count, 2: total module count */
+							__( '<strong>%1$d</strong> of <strong>%2$d</strong> modules enabled', 'classicpack' ),
+							count( $enabled ),
+							count( $registry )
+						),
+						[ 'strong' => [] ]
+					);
+					?>
+					&middot; <a href="https://github.com/wolffe/classicpack#readme" target="_blank" rel="noopener"><?php esc_html_e( 'Read the documentation', 'classicpack' ); ?></a>
+				</p>
+			</div>
+		</header>
 
 		<form action="options.php" method="post" id="<?php echo esc_attr( $screen_id ); ?>">
 			<?php settings_fields( 'classicpack_settings' ); ?>
@@ -344,35 +406,35 @@ function classicpack_render_modules_page() {
 					<h2 class="classicpack-module-category__heading" id="classicpack-cat-<?php echo esc_attr( $group['id'] ); ?>">
 						<?php echo esc_html( $group['title'] ); ?>
 					</h2>
-					<ul class="classicpack-module-list" role="list">
+					<ul class="classicpack-module-grid" role="list">
 						<?php foreach ( $group['slugs'] as $slug ) { ?>
 							<?php
 							if ( empty( $registry[ $slug ] ) ) {
 								continue;
 							}
-							$meta           = $registry[ $slug ];
-							$on             = ! empty( $enabled[ $slug ] );
-							$action_cfgs    = classicpack_get_module_admin_action_config();
-							$action_cfg     = isset( $action_cfgs[ $slug ] ) ? $action_cfgs[ $slug ] : null;
-							$action_url     = '';
+							$meta        = $registry[ $slug ];
+							$on          = ! empty( $enabled[ $slug ] );
+							$action_cfgs = classicpack_get_module_admin_action_config();
+							$action_cfg  = isset( $action_cfgs[ $slug ] ) ? $action_cfgs[ $slug ] : null;
+							$action_url  = '';
 							if ( $action_cfg ) {
 								$c = $action_cfg;
 								if ( ! empty( $c['anchored'] ) ) {
 									$action_url = admin_url( 'admin.php?page=classicpack' ) . '#classicpack-module-anchor-' . sanitize_key( $slug );
 								} elseif ( ! empty( $c['admin_path'] ) ) {
-									$action_url = admin_url( $c['admin_path'] ) . '#classicpack-admin-login-page-input';
+									$action_url = admin_url( $c['admin_path'] ) . ( empty( $c['hash'] ) ? '' : '#' . $c['hash'] );
 								} elseif ( ! empty( $c['page'] ) ) {
 									$action_url = admin_url( 'admin.php?page=' . sanitize_key( $c['page'] ) );
 								}
 							}
-							$action_cap_ok  = $action_cfg && current_user_can( $action_cfg['cap'] );
-							$action_active  = $action_cfg && $on && $action_cap_ok && $action_url !== '';
-							$is_settings    = $action_cfg && isset( $action_cfg['mode'] ) && 'settings' === $action_cfg['mode'];
-							$action_label   = $is_settings ? __( 'Settings', 'classicpack' ) : __( 'Details', 'classicpack' );
+							$action_cap_ok = $action_cfg && current_user_can( $action_cfg['cap'] );
+							$action_active = $action_cfg && $on && $action_cap_ok && $action_url !== '';
+							$is_settings   = $action_cfg && isset( $action_cfg['mode'] ) && 'settings' === $action_cfg['mode'];
+							$action_label  = $is_settings ? __( 'Settings', 'classicpack' ) : __( 'Details', 'classicpack' );
 							?>
-							<li class="classicpack-module-row<?php echo $on ? ' is-active' : ''; ?>" id="classicpack-module-anchor-<?php echo esc_attr( $slug ); ?>">
-								<input type="checkbox" class="classicpack-ui-toggle" id="classicpack-module-<?php echo esc_attr( $slug ); ?>" name="<?php echo esc_attr( $opt ); ?>[]" value="<?php echo esc_attr( $slug ); ?>" <?php checked( $on ); ?> />
-								<div class="classicpack-module-row__main">
+							<li class="classicpack-module-card<?php echo $on ? ' is-active' : ''; ?>" id="classicpack-module-anchor-<?php echo esc_attr( $slug ); ?>">
+								<div class="classicpack-module-card__header">
+									<h3 class="classicpack-module-card__title"><?php echo esc_html( $meta['label'] ); ?></h3>
 									<label class="screen-reader-text" for="classicpack-module-<?php echo esc_attr( $slug ); ?>">
 										<?php
 										echo esc_html(
@@ -384,15 +446,13 @@ function classicpack_render_modules_page() {
 										);
 										?>
 									</label>
-									<h3 class="classicpack-module-row__title"><?php echo esc_html( $meta['label'] ); ?></h3>
-									<p class="classicpack-module-row__desc"><?php echo esc_html( $meta['description'] ); ?></p>
+									<input type="checkbox" class="classicpack-ui-toggle" id="classicpack-module-<?php echo esc_attr( $slug ); ?>" name="<?php echo esc_attr( $opt ); ?>[]" value="<?php echo esc_attr( $slug ); ?>" <?php checked( $on ); ?> />
 								</div>
+								<p class="classicpack-module-card__desc"><?php echo esc_html( $meta['description'] ); ?></p>
 								<?php if ( $action_cfg ) { ?>
-									<div class="classicpack-module-row__actions">
+									<div class="classicpack-module-card__footer">
 										<?php if ( $action_active ) { ?>
-											<a class="button button-small" href="<?php echo esc_url( $action_url ); ?>">
-												<?php echo esc_html( $action_label ); ?>
-											</a>
+											<a class="button button-small" href="<?php echo esc_url( $action_url ); ?>"><?php echo esc_html( $action_label ); ?></a>
 										<?php } else { ?>
 											<?php
 											$inactive_title = ! $on
@@ -401,7 +461,7 @@ function classicpack_render_modules_page() {
 													? __( 'You do not have access to this screen.', 'classicpack' )
 													: __( 'Unavailable.', 'classicpack' ) );
 											?>
-											<button type="button" class="button button-small classicpack-module-row__action--inactive" disabled title="<?php echo esc_attr( $inactive_title ); ?>"><?php echo esc_html( $action_label ); ?></button>
+											<button type="button" class="button button-small classicpack-module-card__action--inactive" disabled title="<?php echo esc_attr( $inactive_title ); ?>"><?php echo esc_html( $action_label ); ?></button>
 										<?php } ?>
 									</div>
 								<?php } ?>
@@ -421,11 +481,11 @@ function classicpack_render_modules_page() {
 			if ( ! form ) {
 				return;
 			}
-			form.querySelectorAll( '.classicpack-module-row input.classicpack-ui-toggle' ).forEach( function ( el ) {
+			form.querySelectorAll( '.classicpack-module-card input.classicpack-ui-toggle' ).forEach( function ( el ) {
 				el.addEventListener( 'change', function () {
-					var row = el.closest( '.classicpack-module-row' );
-					if ( row ) {
-						row.classList.toggle( 'is-active', el.checked );
+					var card = el.closest( '.classicpack-module-card' );
+					if ( card ) {
+						card.classList.toggle( 'is-active', el.checked );
 					}
 				} );
 			} );

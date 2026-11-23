@@ -1,0 +1,83 @@
+<?php
+
+$cfg           = classicpack_backup_get_options();
+$tar_available = classicpack_backup_tar_available();
+
+classicpack_backup_render_stats_cards( $cfg['export_dir'] ?? '' );
+
+if ( isset( $_POST['classicpack_backup_contentcreate'] ) ) {
+	check_admin_referer( 'classicpack_backup_files_backup' );
+
+	if ( empty( $cfg['export_dir'] ) ) {
+		echo '<div id="message" class="error"><p>' . esc_html__( 'Set a backup directory on the main settings page first.', 'classicpack' ) . '</p></div>';
+	} elseif ( ! $tar_available ) {
+		echo '<div id="message" class="error"><p>' . esc_html__( 'File backup requires tar and exec() on the server.', 'classicpack' ) . '</p></div>';
+	} else {
+		if ( ! is_dir( $cfg['export_dir'] ) ) {
+			wp_mkdir_p( $cfg['export_dir'] );
+		}
+
+		$timenow    = time();
+		$mtime      = explode( ' ', microtime() );
+		$time_start = $mtime[1] + $mtime[0];
+		$key        = substr( md5( md5( DB_NAME . '|' . microtime() ) ), 0, 6 );
+		$date       = wp_date( 'm.d.y-H.i.s', $timenow );
+		$files_path = $cfg['export_dir'] . '/' . classicpack_backup_files_archive_basename( $date, $key );
+		$files_ok   = classicpack_backup_create_content_archive( $files_path, $cfg['export_dir'] );
+		$mtime      = explode( ' ', microtime() );
+		$time_end   = $mtime[1] + $mtime[0];
+		$time_total = $time_end - $time_start;
+
+		if ( ! isset( $cfg['logs'] ) || ! is_array( $cfg['logs'] ) ) {
+			$cfg['logs'] = [];
+		}
+
+		$cfg['logs'][] = [
+			'file'    => $files_path,
+			'type'    => 'files',
+			'size'    => ( $files_ok && is_file( $files_path ) ) ? filesize( $files_path ) : 0,
+			'started' => $timenow,
+			'took'    => $time_total,
+			'status'  => $files_ok ? __( 'Successful', 'classicpack' ) : __( 'Failed', 'classicpack' ),
+			'removed' => 0,
+		];
+		update_option( CLASSICPACK_BACKUP_OPTIONS, $cfg );
+
+		if ( $files_ok ) {
+			$download_url = classicpack_backup_get_backup_download_url( $files_path, $cfg['export_dir'] );
+			echo '<div id="message" class="updated fade"><p>' . esc_html__( 'File backup successfully created!', 'classicpack' ) . '</p></div>';
+			if ( $download_url !== '' ) {
+				?>
+				<p><a href="<?php echo esc_url( $download_url ); ?>"><?php esc_html_e( 'Click to download the archive!', 'classicpack' ); ?></a></p>
+				<?php
+			}
+		} else {
+			echo '<div id="message" class="error"><p>' . esc_html__( 'File backup failed. Ensure tar is available and the backup directory is writable.', 'classicpack' ) . '</p></div>';
+		}
+	}
+}
+?>
+
+<div id="poststuff">
+	<div class="postbox">
+		<h3 class="hndle"><span><?php esc_html_e( 'Files Manager Actions', 'classicpack' ); ?></span></h3>
+		<div class="inside">
+			<p><?php
+			echo wp_kses(
+				__( 'Create an archive of your full <code>wp-content</code> folder (excluding the backup directory), plus site root files such as <code>wp-config.php</code> and <code>index.php</code>. Archives are saved in your configured backup folder. Does not include <code>wp-admin</code>, <code>wp-includes</code>, or the database.', 'classicpack' ),
+				[ 'code' => [] ]
+			);
+			?></p>
+			<form method="post" action="">
+				<?php wp_nonce_field( 'classicpack_backup_files_backup' ); ?>
+				<p>
+					<input type="submit" name="classicpack_backup_contentcreate" class="button button-primary" value="<?php esc_attr_e( 'Generate archive now!', 'classicpack' ); ?>"<?php echo $tar_available ? '' : ' disabled'; ?>>
+					<label><?php esc_html_e( 'Use for migration or occasional file backup. Enable scheduled file backups on the main settings page.', 'classicpack' ); ?></label>
+				</p>
+			</form>
+			<p><?php esc_html_e( 'You need enough disk space or the archive may be incomplete.', 'classicpack' ); ?></p>
+			<?php classicpack_backup_render_environment_badges(); ?>
+		</div>
+	</div>
+</div>
+

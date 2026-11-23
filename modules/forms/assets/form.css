@@ -1,0 +1,228 @@
+/*
+ * Forms — front-end form styles.
+ * Scoped under .classicpack-forms-form so it won't bleed into the theme.
+ */
+
+.classicpack-forms-form {
+    max-width: 560px;
+    margin: 1.5em 0;
+    --cpforms-gap: 14px;
+    --cpforms-border: #d0d5dd;
+    --cpforms-focus: #2271b1;
+    --cpforms-bg: #fff;
+    --cpforms-text: #1f2328;
+    --cpforms-muted: #6e7681;
+    --cpforms-success-bg: #ecfdf3;
+    --cpforms-success-text: #027a48;
+    --cpforms-success-border: #abefc6;
+    --cpforms-error-bg: #fef3f2;
+    --cpforms-error-text: #b42318;
+    --cpforms-error-border: #fecdca;
+    --cpforms-radius: 6px;
+
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--cpforms-text);
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--cpforms-gap);
+}
+
+.classicpack-forms-form > .classicpack-forms-status,
+.classicpack-forms-form > .classicpack-forms-actions {
+    grid-column: 1 / -1;
+}
+
+.classicpack-forms-form .classicpack-forms-field {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    grid-column: 1 / -1;
+}
+
+.classicpack-forms-form .classicpack-forms-field-width-half {
+    grid-column: span 1;
+}
+
+.classicpack-forms-form .classicpack-forms-field-label {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.classicpack-forms-form .classicpack-forms-subfields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.classicpack-forms-form .classicpack-forms-subfield {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.classicpack-forms-form .classicpack-forms-subfield small {
+    color: var(--cpforms-muted);
+    font-size: 12px;
+}
+
+.classicpack-forms-form .classicpack-forms-field-description {
+    display: block;
+    margin-top: 2px;
+    color: var(--cpforms-muted);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.classicpack-forms-form label {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.classicpack-forms-form .classicpack-forms-required {
+    color: #b42318;
+}
+
+.classicpack-forms-form input[type="text"],
+.classicpack-forms-form input[type="email"],
+.classicpack-forms-form input[type="tel"],
+.classicpack-forms-form input[type="number"],
+.classicpack-forms-form input[type="url"],
+.classicpack-forms-form input[type="date"],
+.classicpack-forms-form input[type="time"],
+.classicpack-forms-form select,
+.classicpack-forms-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    font: inherit;
+    color: var(--cpforms-text);
+    background: var(--cpforms-bg);
+    border: 1px solid var(--cpforms-border);
+    border-radius: var(--cpforms-radius);
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.classicpack-forms-form textarea {
+    resize: vertical;
+    min-height: 120px;
+    font-family: inherit;
+}
+
+.classicpack-forms-form input:focus,
+.classicpack-forms-form select:focus,
+.classicpack-forms-form textarea:focus {
+    outline: none;
+    border-color: var(--cpforms-focus);
+    box-shadow: 0 0 0 3px rgba(34, 113, 177, 0.18);
+}
+
+.classicpack-forms-form .classicpack-forms-field-checkbox {
+    margin-top: 4px;
+}
+
+.classicpack-forms-form .classicpack-forms-checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-weight: 400;
+    color: var(--cpforms-muted);
+    cursor: pointer;
+    line-height: 1.4;
+}
+
+.classicpack-forms-form .classicpack-forms-checkbox-label input[type="checkbox"] {
+    margin-top: 3px;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--cpforms-focus);
+    flex: 0 0 auto;
+}
+
+.classicpack-forms-form .classicpack-forms-actions {
+    margin: 0;
+}
+
+.classicpack-forms-form .classicpack-forms-submit {
+    appearance: none;
+    -webkit-appearance: none;
+    padding: 10px 22px;
+    font: inherit;
+    font-weight: 600;
+    color: #fff;
+    background: var(--cpforms-focus);
+    border: 1px solid transparent;
+    border-radius: var(--cpforms-radius);
+    cursor: pointer;
+    transition: background-color 120ms ease, transform 120ms ease;
+}
+
+.classicpack-forms-form .classicpack-forms-submit:hover {
+    background: #18568d;
+}
+
+.classicpack-forms-form .classicpack-forms-submit:active {
+    transform: translateY(1px);
+}
+
+.classicpack-forms-form .classicpack-forms-submit:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+.classicpack-forms-form .classicpack-forms-status {
+    padding: 10px 12px;
+    border-radius: var(--cpforms-radius);
+    font-size: 14px;
+    border: 1px solid transparent;
+}
+
+.classicpack-forms-form .classicpack-forms-status-success {
+    background: var(--cpforms-success-bg);
+    color: var(--cpforms-success-text);
+    border-color: var(--cpforms-success-border);
+}
+
+.classicpack-forms-form .classicpack-forms-status-error {
+    background: var(--cpforms-error-bg);
+    color: var(--cpforms-error-text);
+    border-color: var(--cpforms-error-border);
+}
+
+.classicpack-forms-form .classicpack-forms-honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* CAPTCHA code display */
+.classicpack-forms-form .classicpack-forms-captcha-code {
+    display: inline-block;
+    padding: 0.35em 0.75em;
+    background: #f3f4f6;
+    border: 1px solid var(--cpforms-border);
+    border-radius: var(--cpforms-radius);
+    font-family: monospace;
+    font-size: 1.25em;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    user-select: none;
+    color: var(--cpforms-text);
+}
+
+@media (max-width: 520px) {
+    .classicpack-forms-form {
+        font-size: 16px;
+        grid-template-columns: 1fr;
+    }
+    .classicpack-forms-form .classicpack-forms-field-width-half {
+        grid-column: 1 / -1;
+    }
+    .classicpack-forms-form .classicpack-forms-submit {
+        width: 100%;
+    }
+}
